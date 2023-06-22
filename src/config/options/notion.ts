@@ -10,7 +10,3 @@ export const detect = {
   "full": isTesting ? "10457888488b4c25901bd7568230d8dd" : "481b6de47c6a41debf83fe1b93700622",
   "prob": isTesting ? "1f0ba8521472436390ce713b78eae2c0" : "5e22777f724b4f27a336cdce350bc1a2",
 };
-
-export const cards = {
-  "cards": isTesting ? "a3a34462a7d04b8782fc3b476716fbdb" : "a51cd483c8fa4e64946f14ab55304b57",
-};
