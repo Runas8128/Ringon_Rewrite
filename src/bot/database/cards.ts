@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-import { cards } from '../../config/options/notion';
-import { Database } from '../../util/notion';
-
 export interface Card {
   page_id: string | undefined;
   card_id: number;
@@ -38,13 +35,9 @@ const char_map : { [keys: number]: string } = {
 };
 
 export class Cards {
-  id_map: { 'cards': string };
-  db: Database;
   cards: Card[];
 
   constructor() {
-    this.id_map = cards;
-    this.db = new Database(this.id_map.cards);
     this.cards = [];
   }
 
