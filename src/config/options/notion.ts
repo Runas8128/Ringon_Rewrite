@@ -1,5 +1,7 @@
 import { isTesting } from './client_options';
 
+export const page = isTesting ? "12768329c96d4a13957df1408803e2b1" : "e71839af3e2046ad81b094f0e034000e";
+
 export const deck = {
   "list": isTesting ? "e03e004d47df40fe8377bfda713c5707" : "8ef3fed5a101492882ba96dab96c096b",
   "contrib": isTesting ? "89c22f42529a4401bff30369544e8e51" : "7a5aec5497b64aa5a9e0942fbeb81c97",
