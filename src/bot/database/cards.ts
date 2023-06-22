@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export interface Card {
-  page_id: string | undefined;
+  page_id?: string;
   card_id: number;
   name: string;
   cost: number;
@@ -41,33 +41,24 @@ export class Cards {
     this.cards = [];
   }
 
-  parse_payload({
-    card_id, card_name, cost, char_type,
-    atk, life, skill_disc,
-    evo_atk, evo_life, evo_skill_disc,
-  }: card_payload): Card {
-    return {
-      page_id: undefined,
-      card_id,
-      name: card_name,
-      cost,
-      type: char_map[char_type],
-      atk,
-      life,
-      desc: skill_disc,
-      evo_atk,
-      evo_life,
-      evo_desc: evo_skill_disc,
-    };
-  }
-
   async load() {
     const resp = await axios.get('https://shadowverse-portal.com/api/v1/cards?format=json&lang=ko');
     const payloads: card_payload[] = resp.data.data.cards;
 
     this.cards = payloads
       .filter(card => card.card_name)
-      .map(this.parse_payload)
+      .map(parse_payload)
       .sort((card1, card2) => card1.card_id - card2.card_id);
   }
 }
+
+const parse_payload = ({
+  card_id, card_name, cost, char_type,
+  atk, life, skill_disc,
+  evo_atk, evo_life, evo_skill_disc,
+}: card_payload) => ({
+  card_id, name: card_name, cost,
+  type: char_map[char_type],
+  atk, life, desc: skill_disc,
+  evo_atk, evo_life, evo_desc: evo_skill_disc,
+} as Card);
