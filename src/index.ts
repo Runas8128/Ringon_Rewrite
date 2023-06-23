@@ -10,6 +10,10 @@ process.on('uncaughtException', (error) => {
   logger.error(error.stack);
 });
 
-env_init();
-DB_Manager.load_all();
-app.start();
+(async () => {
+  env_init();
+  await Promise.all([
+    DB_Manager.load_all(),
+    app.start(),
+  ]);
+})();

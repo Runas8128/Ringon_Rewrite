@@ -56,11 +56,11 @@ export default class extends UpDownView {
 
   check_range() {
     if (this.index <= 0) this.index = 0;
-    this.top.setDisabled(this.index == 0);
-    this.up.setDisabled(this.index == 0);
+    this.top.setDisabled(this.index === 0);
+    this.up.setDisabled(this.index === 0);
 
     if (this.index >= this.fields.length - 10) this.index = this.fields.length - 10;
-    this.down.setDisabled(this.index == this.fields.length - 10);
-    this.bottom.setDisabled(this.index == this.fields.length - 10);
+    this.down.setDisabled(this.index === this.fields.length - 10);
+    this.bottom.setDisabled(this.index === this.fields.length - 10);
   }
 }

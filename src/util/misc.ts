@@ -6,18 +6,18 @@ export function isRetryable(error: any) {
     (error instanceof APIResponseError && error.code === APIErrorCode.RateLimited);
 }
 
-export async function reply(interaction: ChatInputCommandInteraction, msg: string | MessagePayload | InteractionReplyOptions) {
+export function reply(interaction: ChatInputCommandInteraction, msg: string | MessagePayload | InteractionReplyOptions) {
   if (interaction.replied || interaction.deferred) {
-    interaction.editReply(msg);
+    return interaction.editReply(msg);
   }
   else {
-    interaction.reply(msg);
+    return interaction.reply(msg);
   }
 }
 
 export async function catch_timeout(interaction: ChatInputCommandInteraction, callback: () => Promise<void>, try_count: number) {
   if (try_count > 5) {
-    reply(interaction, {
+    await reply(interaction, {
       content: '재시도 횟수가 5회를 초과했습니다. 요청을 취소합니다.',
       ephemeral: true,
     });
@@ -32,7 +32,7 @@ export async function catch_timeout(interaction: ChatInputCommandInteraction, ca
   catch (err) {
     if (!isRetryable(err)) throw err;
 
-    reply(interaction, {
+    await reply(interaction, {
       content: `요청에 실패했습니다. 재시도중... (${try_count} / 5)`,
       ephemeral: true,
     });

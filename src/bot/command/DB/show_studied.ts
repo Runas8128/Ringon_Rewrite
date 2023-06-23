@@ -1,8 +1,8 @@
 import { APIEmbedField, SlashCommandBuilder } from "discord.js";
 import { Command } from "../Command";
-import { reply } from "../../../util/misc";
 import { DB_Manager } from "../../database";
 import StudiedView from "../../view/StudiedView";
+import { reply } from "../../../util/misc";
 
 export default {
   perm: 'member',
@@ -29,13 +29,13 @@ export default {
         .map(target => ({
           name: target,
           value: DB_Manager.detect.prob
-            .filter(obj => obj.target == target)
+            .filter(obj => obj.target === target)
             .map(({ result, ratio }) => `${result} (가중치: ${ratio})`)
             .join('\n'),
           inline: false,
         })),
     );
-    reply(interaction, new StudiedView(
+    await reply(interaction, new StudiedView(
       fields.length > 0 ?
         fields :
         [{ name: '엥 비어있네요', value: '왜지...', inline: true }],

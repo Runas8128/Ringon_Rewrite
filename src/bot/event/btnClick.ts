@@ -38,6 +38,6 @@ export default {
       'custom_id' in obj.button.data &&
       obj.button.data.custom_id === interaction.customId
     );
-    button?.callback(interaction);
+    await button?.callback(interaction);
   },
 } as Event;

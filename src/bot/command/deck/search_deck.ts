@@ -29,28 +29,22 @@ export default {
     const author = interaction.options.getUser('제작자');
     const clazz = interaction.options.getString('클래스');
 
-    function kw_pred(deck: Deck, kws: string[]) {
-      return kws.filter((kw) => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length;
-    }
+    const kw_pred = (deck: Deck, kws: string[]) =>
+      kws.filter(kw => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length;
 
     let decks: Deck[] = JSON.parse(JSON.stringify(DB_Manager.decklist.decklist)); // Copy full decklist
 
     if (keyword) {
       const kws = keyword.split(' ');
       decks = decks.sort((d1, d2) => kw_pred(d2, kws) - kw_pred(d1, kws));
-      const first_not_match_idx = decks.findIndex(deck => kw_pred(deck, kws) == 0);
+      const first_not_match_idx = decks.findIndex(deck => kw_pred(deck, kws) === 0);
       decks.splice(first_not_match_idx);
     }
 
-    if (author) {
-      decks = decks.filter(deck => deck.author == author.id);
-    }
+    if (author) decks = decks.filter(deck => deck.author === author.id);
+    if (clazz) decks = decks.filter(deck => deck.clazz === clazz);
 
-    if (clazz) {
-      decks = decks.filter(deck => deck.clazz == clazz);
-    }
-
-    reply(
+    await reply(
       interaction,
       new DecklistView(decks, interaction.guild!).get_updated_msg(),
     );

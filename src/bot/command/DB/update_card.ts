@@ -14,7 +14,7 @@ export default {
     try {
       await interaction.editReply('카드 DB 업데이트가 끝났습니다!')
     } catch (err) {
-      interaction.channel?.send('카드 DB 업데이트가 끝났습니다!');
+      await interaction.channel?.send('카드 DB 업데이트가 끝났습니다!');
     }
   },
 } as Command;

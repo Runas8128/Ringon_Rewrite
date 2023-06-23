@@ -14,8 +14,10 @@ export default {
       .setDescription('새로운 팩의 이름입니다.')
       .setRequired(true)),
   async execute(interaction) {
-    if (!interaction.channel || !interaction.guild)
-      return reply(interaction, "팩이름 명령어는 서버의 텍스트 채널에서 사용해주세요!");
+    if (!interaction.channel || !interaction.guild) {
+      await reply(interaction, "팩이름 명령어는 서버의 텍스트 채널에서 사용해주세요!");
+      return;
+    }
 
     await reply(interaction, {
       embeds: [new EmbedBuilder()
@@ -24,12 +26,14 @@ export default {
       ],
     });
 
-    if (!(await check(interaction)))
-      return reply(interaction, { content: '팩 변경을 취소합니다.' });
+    if (!(await check(interaction))) {
+      await reply(interaction, { content: '팩 변경을 취소합니다.' });
+      return;
+    }
 
-    interaction.followUp('승인되었습니다! 덱리 초기화 및 팩이름 변경을 실행합니다...');
+    await interaction.followUp('승인되었습니다! 덱리 초기화 및 팩이름 변경을 실행합니다...');
 
-    DB_Manager.decklist.update_pack(
+    await DB_Manager.decklist.update_pack(
       interaction.options.getString('이름', true),
       interaction.guild,
     );

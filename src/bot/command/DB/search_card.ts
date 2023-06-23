@@ -29,7 +29,7 @@ export default {
     const first_not_match_idx = list.findIndex(deck => kw_pred(deck) === 0);
     list.splice(first_not_match_idx);
 
-    reply(
+    await reply(
       interaction,
       new CardView(list).get_updated_msg(),
     );

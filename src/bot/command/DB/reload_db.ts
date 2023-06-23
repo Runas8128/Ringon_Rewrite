@@ -19,19 +19,24 @@ export default {
       )),
   async execute(interaction) {
     await interaction.reply({
-      embeds: [new EmbedBuilder()
-        .setTitle('🔄 DB를 업데이트하는 중입니다')
-        .setDescription('예상 시간: ~ 3분')],
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('🔄 DB를 업데이트하는 중입니다')
+          .setDescription('예상 시간: ~ 3분')
+      ],
     });
+
     const sync_start = Date.now();
     const dbName = interaction.options.getString('db', true);
     if (dbName === 'detect' || dbName === 'decklist' || dbName === 'cards')
       await DB_Manager.load(dbName);
     const sync_end = Date.now();
-    interaction.editReply({
-      embeds: [new EmbedBuilder()
-        .setTitle('🔄 DB 업데이트 완료!')
-        .setDescription(`소요 시간: ${(sync_end - sync_start) / 1000}초`),
+    
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('🔄 DB 업데이트 완료!')
+          .setDescription(`소요 시간: ${(sync_end - sync_start) / 1000}초`),
       ],
     });
   },

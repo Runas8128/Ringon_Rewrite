@@ -18,11 +18,13 @@ export class Bot {
     this.client = client;
   }
 
-  static login() {
-    this.client!.login(this.token);
+  static async login() {
+    while (!this.client);
+
+    await this.client.login(this.token);
 
     if (!isTesting) return;
-    this.client!.on('ready', async () => {
+    this.client.on('ready', async () => {
       this.client!.user?.setPresence({
         status: 'dnd',
         activities: [{ name: '버그 수정' }],

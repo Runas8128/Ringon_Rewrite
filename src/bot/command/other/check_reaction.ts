@@ -2,9 +2,6 @@ import { ChannelManager, GuildMember, Message } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { channel, role } from "../../../config/options/discord";
-import { loggerGen } from "../../../util/logger";
-
-const logger = loggerGen.getLogger(__filename);
 
 export default {
   perm: 'admin',
@@ -46,7 +43,7 @@ export default {
 
     Object.keys(result).forEach(emoji =>
       embed.addFields({
-        name: emoji == 'other' ? '그 외' : emoji == 'none' ? '반응 안함' : emoji,
+        name: emoji === 'other' ? '그 외' : emoji === 'none' ? '반응 안함' : emoji,
         value: result[emoji].join(', ') || '없음',
       })
     );
@@ -61,11 +58,11 @@ async function collect_reaction(message: Message, indi_emojis: string[], all_mem
 
   await Promise.all(message.reactions.cache
     .map(async reaction => {
-      const emoji = (indi_emojis.includes(reaction.emoji.name ?? '')) ? reaction.emoji.name ?? '' : 'other';
+      const emoji = indi_emojis.includes(reaction.emoji.name ?? '') ? reaction.emoji.name ?? '' : 'other';
       const users = await reaction.users.fetch();
 
       users.forEach(user => {
-        const index = all_members.findIndex(({ id }) => id == user.id);
+        const index = all_members.findIndex(m => m.id === user.id);
         if (index !== -1)
           result[emoji].push(...all_members.splice(index, 1));
       });

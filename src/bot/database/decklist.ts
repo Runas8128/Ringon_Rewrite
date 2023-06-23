@@ -61,8 +61,8 @@ export class DeckList {
     const embed = new EmbedBuilder()
       .setTitle(`총 ${total_count}개 덱 분석 결과`);
 
-    Object.keys(classes).forEach((clazz) => {
-      const count = this.decklist.filter((deck) => deck.clazz === clazz).length;
+    Object.keys(classes).forEach(clazz => {
+      const count = this.decklist.filter(deck => deck.clazz === clazz).length;
       if (count === 0) return;
 
       const class_emoji = client.emojis.cache.find(emoji => emoji.id === classes[clazz]);
@@ -78,13 +78,13 @@ export class DeckList {
 
   async update_pack(new_pack: string, guild: Guild) {
     for (const deck of this.decklist) {
-      this._delete_deck(deck, guild);
+      await this._delete_deck(deck, guild);
     }
-    this.pack_block.update(new_pack);
+    await this.pack_block.update(new_pack);
   }
 
   async _delete_deck(deck: Deck, guild: Guild) {
-    if (this.history === undefined) {
+    if (!this.history) {
       this.history = guild.channels.cache
         .find(ch => ch.id === channel.history) as TextChannel;
     }
@@ -110,22 +110,21 @@ export class DeckList {
 
     if (
       updater != deck.author &&
-      !(this.contrib.some(obj =>
-        obj.DeckID === deck.deck_id && obj.ContribID === updater))
+      !(this.contrib.some(obj => obj.DeckID === deck.deck_id && obj.ContribID === updater))
     ) {
       this.contrib.push({ DeckID: deck.deck_id, ContribID: updater });
-      this.contrib_db.push(
+      await this.contrib_db.push(
         { name: 'DeckID', value: deck.deck_id, type: 'title' },
         { name: 'ContribID', value: updater, type: 'rich_text' },
       );
     }
 
-    this.list_db.update(
+    await this.list_db.update(
       deck.page_id,
-      ...this.propertify(deck),
+      ...propertify(deck),
     );
 
-    this.history!.send({ embeds: [history_embed] });
+    await this.history!.send({ embeds: [history_embed] });
   }
 
   make_deck_embed(deck: Deck, guild: Guild) {
@@ -164,9 +163,8 @@ export class DeckList {
     if (deck.desc.length > 0) {
       deck_info.addFields({ name: '덱 설명', value: deck.desc, inline: false });
       const hashtags = deck.desc.match(/#(\w+)/g);
-      if (hashtags) {
+      if (hashtags)
         deck_info.addFields({ name: '해시태그', value: hashtags.join(', ') });
-      }
     }
 
     deck_info.setImage(deck.image_url);
@@ -201,23 +199,19 @@ export class DeckList {
       .split('T')[0]
       .replaceAll('-', '/');
 
-    this.list_db.push(...this.propertify(deck))
-      .then(resp => {
-        deck.page_id = resp?.id || '';
-        this.decklist.push(deck);
-      });
-  }
-
-  propertify(deck: Deck): PropertyPayload[] {
-    return [
-      { name: 'deck_id', type: 'number', value: deck.deck_id },
-      { name: 'name', type: 'title', value: deck.name },
-      { name: 'clazz', type: 'select', value: deck.clazz },
-      { name: 'desc', type: 'rich_text', value: deck.desc },
-      { name: 'author', type: 'rich_text', value: deck.author },
-      { name: 'image_url', type: 'rich_text', value: deck.image_url },
-      { name: 'timestamp', type: 'rich_text', value: deck.timestamp },
-      { name: 'version', type: 'number', value: deck.version },
-    ];
+    const resp = await this.list_db.push(...propertify(deck));
+    deck.page_id = resp?.id || '';
+    this.decklist.push(deck);
   }
 }
+
+const propertify = (deck: Deck): PropertyPayload[] => [
+  { name: 'deck_id', type: 'number', value: deck.deck_id },
+  { name: 'name', type: 'title', value: deck.name },
+  { name: 'clazz', type: 'select', value: deck.clazz },
+  { name: 'desc', type: 'rich_text', value: deck.desc },
+  { name: 'author', type: 'rich_text', value: deck.author },
+  { name: 'image_url', type: 'rich_text', value: deck.image_url },
+  { name: 'timestamp', type: 'rich_text', value: deck.timestamp },
+  { name: 'version', type: 'number', value: deck.version },
+];

@@ -10,7 +10,6 @@ export default {
     .setDescription('링곤이가 배운 단어들이 몇 개인지 알려줍니다.'),
   async execute(interaction) {
     const count = DB_Manager.detect.full.length + new Set(DB_Manager.detect.prob.map(obj => obj.target)).size;
-    const msg = `링곤 사전을 보니, 저의 아이큐는 ${count}이라고 하네요!`;
-    reply(interaction, msg);
+    await reply(interaction, `링곤 사전을 보니, 저의 아이큐는 ${count}이라고 하네요!`);
   },
 } as Command;

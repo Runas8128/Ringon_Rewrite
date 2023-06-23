@@ -34,7 +34,7 @@ export default class extends UpDownView {
       .setTitle(`카드 이름: ${card.name}`)
       .setImage(`https://shadowverse-portal.com/image/card/phase2/common/C/C_${card.card_id}.png`);
 
-    if (card.type == '추종자') {
+    if (card.type === '추종자') {
       embed.addFields(
         { name: '비용', value: card.cost.toString(), inline: true },
         { name: '공격력/체력', value: `${card.atk}/${card.life}`, inline: true },
@@ -73,8 +73,8 @@ export default class extends UpDownView {
 
   check_range() {
     if (this.index <= 0) this.index = 0;
-    this.prev.setDisabled(this.index == 0);
+    this.prev.setDisabled(this.index === 0);
     if (this.index >= this.cards.length - 1) this.index = this.cards.length - 1;
-    this.next.setDisabled(this.index == this.cards.length - 1);
+    this.next.setDisabled(this.index === this.cards.length - 1);
   }
 }

@@ -9,7 +9,7 @@ export default {
     .setName('덱분석')
     .setDescription('덱을 분석해줍니다.'),
   async execute(interaction) {
-    reply(interaction, {
+    await reply(interaction, {
       embeds: [DB_Manager.decklist.analyze(interaction.client)],
     });
   },

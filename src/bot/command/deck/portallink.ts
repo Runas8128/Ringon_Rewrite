@@ -24,11 +24,10 @@ export default {
     const result: Portal = (await axios.get(
       `https://shadowverse-portal.com/api/v1/deck/import?format=json&deck_code=${deck_code}`)).data;
 
-    if (result.data.errors.length > 0)
-      return reply(
-        interaction,
-        '덱 코드가 무효하거나, 잘못 입력되었습니다. 다시 입력해 주시기 바랍니다.',
-      );
+    if (result.data.errors.length > 0) {
+      await reply(interaction, '덱 코드가 무효하거나, 잘못 입력되었습니다. 다시 입력해 주시기 바랍니다.');
+      return;
+    }
 
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
@@ -37,6 +36,6 @@ export default {
           .setStyle(ButtonStyle.Link)
           .setURL(`https://shadowverse-portal.com/deck/${result.data.hash}?lang=ko`),
       );
-    reply(interaction, { components: [row] });
+    await reply(interaction, { components: [row] });
   },
 } as Command;

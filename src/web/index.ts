@@ -18,19 +18,17 @@ class App {
 
   load_page() {
     for (const page of pageList) {
-      if (page.get) this.app.get(page.path, page.get);
-      if (page.post) this.app.post(page.path, page.post);
-      if (page.put) this.app.put(page.path, page.put);
-      if (page.patch) this.app.patch(page.path, page.patch);
+      if (page.get)    this.app.get(page.path, page.get);
+      if (page.post)   this.app.post(page.path, page.post);
+      if (page.put)    this.app.put(page.path, page.put);
+      if (page.patch)  this.app.patch(page.path, page.patch);
       if (page.delete) this.app.delete(page.path, page.delete);
     }
   }
 
-  start() {
-    this.app.listen(8080, () => {
-      console.log('Listening on 8080');
-      Bot.login();
-    });
+  async start() {
+    this.app.listen(8080, () => console.log('Listening on 8080'));
+    await Bot.login();
   }
 }
 

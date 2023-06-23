@@ -25,10 +25,12 @@ class Manager {
     };
   }
 
-  load_all() {
-    this.load('detect');
-    this.load('decklist');
-    this.load('cards');
+  async load_all() {
+    await Promise.all([
+      this.load('detect'),
+      this.load('decklist'),
+      this.load('cards'),
+    ]);
   }
 
   async load(DB: dbName) {

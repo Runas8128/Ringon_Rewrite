@@ -13,7 +13,7 @@ export default {
   async execute(interaction) {
     const channel = interaction.channel;
     if (channel === null || channel.isDMBased()) return;
-    channel.bulkDelete(interaction.options.getInteger('갯수', true))
-      .then(() => interaction.reply({ content: 'Done!', ephemeral: true }));
+    await channel.bulkDelete(interaction.options.getInteger('갯수', true));
+    await interaction.reply({ content: 'Done!', ephemeral: true });
   },
 } as Command;

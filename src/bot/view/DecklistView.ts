@@ -21,26 +21,26 @@ export default class extends UpDownView {
     this.guild = guild;
 
     this.prev = eventHandler
-      .register(async i => await this.update_message(i, (index) => index - 1))
+      .register(i => this.update_message(i, index => index - 1))
       .setStyle(ButtonStyle.Primary)
       .setLabel('≪ 이전 덱')
       .setCustomId(`Deck_prev_${Date.now()}`);
 
     this.menu = eventHandler
-      .register(async i => await this.open_menu(i))
+      .register(i => this.open_menu(i))
       .setStyle(ButtonStyle.Secondary)
       .setLabel('메뉴')
       .setCustomId(`Deck_menu_${Date.now()}`)
-      .setDisabled(this.decks.length == 0);
+      .setDisabled(this.decks.length === 0);
 
     this.next = eventHandler
-      .register(async i => await this.update_message(i, (index) => index + 1))
+      .register(i => this.update_message(i, index => index + 1))
       .setStyle(ButtonStyle.Primary)
       .setLabel('다음 덱 ≫')
       .setCustomId(`Deck_next_${Date.now()}`);
 
     this.delete = eventHandler
-      .register(async i => await this._delete(i))
+      .register(i => this._delete(i))
       .setStyle(ButtonStyle.Danger)
       .setLabel('삭제')
       .setCustomId(`Deck_delete_${Date.now()}`);
@@ -51,8 +51,7 @@ export default class extends UpDownView {
 
     const customID = `DeckSelector_${Date.now()}`;
     const options = this.decks.map(({ name, desc, clazz }, index) => {
-      const shrunk_desc = desc.length > 100 ?
-        desc.substring(0, 97) + '...' : desc;
+      const shrunk_desc = desc.length > 100 ? desc.substring(0, 97) + '...' : desc;
 
       return {
         label: name,
@@ -92,7 +91,7 @@ export default class extends UpDownView {
   }
 
   build_embed() {
-    if (this.decks.length == 0)
+    if (this.decks.length === 0)
       return new EmbedBuilder()
         .setTitle('❌ 검색 결과가 없습니다.');
     return DB_Manager.decklist.make_deck_embed(this.decks[this.index], this.guild);
@@ -104,7 +103,7 @@ export default class extends UpDownView {
   }
 
   check_range() {
-    if (this.decks.length == 0) {
+    if (this.decks.length === 0) {
       this.prev.setDisabled(true);
       this.menu.setDisabled(true);
       this.next.setDisabled(true);
@@ -112,9 +111,9 @@ export default class extends UpDownView {
     }
     else {
       if (this.index <= 0) this.index = 0;
-      this.prev.setDisabled(this.index == 0);
+      this.prev.setDisabled(this.index === 0);
       if (this.index >= this.decks.length - 1) this.index = this.decks.length - 1;
-      this.next.setDisabled(this.index == this.decks.length - 1);
+      this.next.setDisabled(this.index === this.decks.length - 1);
     }
   }
 }

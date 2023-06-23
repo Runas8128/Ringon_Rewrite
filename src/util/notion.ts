@@ -1,5 +1,5 @@
 import { Client, UnknownHTTPResponseError } from '@notionhq/client';
-import { PageObjectResponse, PartialPageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { PageObjectResponse, PartialPageObjectResponse, QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { loggerGen } from './logger';
 import { timer } from './misc';
 
@@ -48,15 +48,10 @@ interface PageObject {
 
 function wrap_property(prop: PropertyPayload) {
   let obj;
-  if (prop.type === 'title' || prop.type === 'rich_text') {
-    obj = [ { text: { content: prop.value } } ];
-  }
-  else if (prop.type === 'select') {
-    obj = { name: prop.value };
-  }
-  else if (prop.type === 'number') {
-    obj = prop.value;
-  }
+  if (prop.type === 'title')     obj = [{ text: { content: prop.value } }];
+  if (prop.type === 'rich_text') obj = [{ text: { content: prop.value } }];
+  if (prop.type === 'select')    obj = { name: prop.value };
+  if (prop.type === 'number')    obj = prop.value;
 
   const data: { [keys: string] : any } = {};
   data[prop.type] = obj;
@@ -66,23 +61,15 @@ function wrap_property(prop: PropertyPayload) {
 function unwrap_property(prop: Property | undefined) {
   if (!prop) return;
 
-  if (prop.type === 'title') {
-    return prop[prop.type]?.[0].plain_text;
-  }
-  else if (prop.type === 'rich_text') {
-    return prop[prop.type]?.[0].plain_text;
-  }
-  else if (prop.type === 'number') {
-    return prop.number;
-  }
-  else if (prop.type === 'select') {
-    return prop.select?.name;
-  }
+  if (prop.type === 'title')     return prop[prop.type]?.[0].plain_text;
+  if (prop.type === 'rich_text') return prop[prop.type]?.[0].plain_text;
+  if (prop.type === 'number')    return prop.number;
+  if (prop.type === 'select')    return prop.select?.name;
 }
 
 function getProperty(result: PageObjectResponse | PartialPageObjectResponse, name: string) : Property | undefined {
-  if (!('properties' in result)) return;
-  return result.properties[name] as Property;
+  if ('properties' in result)
+    return result.properties[name] as Property;
 }
 
 export class Database {
@@ -132,8 +119,8 @@ export class Database {
   }
 
   async load(...properties: PropertyDiscriptor[]) {
-    let pages;
-    let start_cursor;
+    let pages: QueryDatabaseResponse;
+    let start_cursor: string | null = null;
     const data: any[] = [];
 
     do {
@@ -143,14 +130,8 @@ export class Database {
       });
       pages.results.forEach(result => {
         const obj: { [keys: string]: any } = {};
-
-        properties.forEach(property => {
-          if (property.type === 'page_id') {
-            obj[property.name] = result.id;
-          }
-          else {
-            obj[property.name] = unwrap_property(getProperty(result, property.name));
-          }
+        properties.forEach(({ name, type }) => {
+          obj[name] = type === 'page_id' ? result.id : unwrap_property(getProperty(result, name));
         });
         data.push(obj);
       });
@@ -162,19 +143,13 @@ export class Database {
 
   async delete(page_id: string) {
     try {
-      (await Notion.blocks()).delete({ block_id: page_id });
+      await (await Notion.blocks()).delete({ block_id: page_id });
     }
     catch (err) {
-      if (err instanceof UnknownHTTPResponseError) {
-        logger.warn(
-          `Unknown HTTP response error: code ${err.code}, retrying in 100ms`,
-        );
-        await timer(100);
-        this.delete(page_id);
-      }
-      else {
-        throw err;
-      }
+      if (!(err instanceof UnknownHTTPResponseError)) throw err;
+      logger.warn(`Unknown HTTP response error: code ${err.code}, retrying in 100ms`);
+      await timer(100);
+      await this.delete(page_id);
     }
   }
 
@@ -183,7 +158,7 @@ export class Database {
       { name: 'page_id', type: 'page_id' },
     );
     for (const page of all_page) {
-      this.delete(page.page_id);
+      await this.delete(page.page_id);
     }
   }
 }
@@ -205,7 +180,7 @@ export class Block {
   }
 
   async update(new_string: string) {
-    (await Notion.blocks()).update({
+    await (await Notion.blocks()).update({
       block_id: this.block_id,
       paragraph: { 'rich_text': [{ 'text': { 'content': new_string } }] },
     });

@@ -7,7 +7,7 @@ export default {
     .setName('종료')
     .setDescription('봇을 강제종료합니다.'),
   async execute(interaction) {
-    interaction.reply('강제종료중...');
+    await interaction.reply('강제종료중...');
     interaction.client.destroy();
   },
 } as Command;
