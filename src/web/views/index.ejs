@@ -3,7 +3,25 @@
 <html>
   <%-include('base/meta.ejs')%>
   <body>
-    <%-include('base/navbar.ejs')%>
-    <p>아직 개발되지 안아스빈다</p>
+    <div id="navbar">
+      <nav>
+        <img id="ringon_img" src="Ringon.png" width="60" height="60" style="padding-left: 3%;">
+      </nav>
+    </div>    
+    <div id="log">
+      <table>
+        <tr>
+          <th>level</th><th>file</th><th>timestamp</th><th>message</th>
+        </tr>
+        <% for (const stuff of stuffs) { %>
+          <tr>
+            <td id="level"><%= stuff.level %></td>
+            <td id="label"><%= stuff.label %></td>
+            <td id="timestamp"><%= stuff.timestamp %></td>
+            <td id="message"><%= stuff.message %></td>
+          </tr>
+        <% } %>
+      </table>
+    </div>
   </body>
 </html>

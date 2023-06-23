@@ -1,14 +1,10 @@
 import { Page } from "../Page";
 
-const log: string[] = [];
+export const log: string[] = [];
 
 export default {
   path: '/log',
-  methods: ['get', 'post'],
-
-  get: (req, resp) => {
-    resp.render('log', { stuffs: log });
-  },
+  methods: ['post'],
 
   post: (req, resp) => {
     let new_log = '';
