@@ -1,7 +1,7 @@
 # TODO
 
 ### 봇
-[ ] check_reaction 함수 추가
+[*] check_reaction 함수 추가
 
 ### DB
 [*] Cards DB -> 노션 안거치고 바로 로드되게 하기
