@@ -12,6 +12,8 @@ import new_pack from "./deck/new_pack";
 import portallink from "./deck/portallink";
 import search_deck from "./deck/search_deck";
 
+import check_reaction from "./other/check_reaction";
+
 import latency from "./simple/latency";
 import kill from "./simple/kill";
 import prune from "./simple/prune";
@@ -19,5 +21,6 @@ import prune from "./simple/prune";
 export const commandList: Command[] = [
   card_count, IQ, reload_db, search_card, show_studied, update_card,
   analyze_deck, new_pack, portallink, search_deck,
+  check_reaction,
   kill, latency, prune,
 ];
