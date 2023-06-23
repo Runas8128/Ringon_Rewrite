@@ -2,6 +2,9 @@ import { ChannelManager, GuildMember, Message } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { channel, role } from "../../../config/options/discord";
+import { loggerGen } from "../../../util/logger";
+
+const logger = loggerGen.getLogger(__filename);
 
 export default {
   perm: 'admin',
@@ -58,7 +61,7 @@ async function collect_reaction(message: Message, indi_emojis: string[], all_mem
 
   await Promise.all(message.reactions.cache
     .map(async reaction => {
-      const emoji = (typeof reaction.emoji === 'string' && indi_emojis.includes(reaction.emoji)) ? reaction.emoji : 'other';
+      const emoji = (indi_emojis.includes(reaction.emoji.name ?? '')) ? reaction.emoji.name ?? '' : 'other';
       const users = await reaction.users.fetch();
 
       users.forEach(user => {
