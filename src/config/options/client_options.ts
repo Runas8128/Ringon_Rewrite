@@ -13,4 +13,4 @@ export const partials : Partials[] = [
   Partials.Message,
 ];
 
-export const isTesting : boolean = true;
+export const isTesting : boolean = false;
