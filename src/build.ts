@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, writeFileSync, copyFileSync, mkdirSync, rmSync } from "fs";
+import { readFileSync, readdirSync, writeFileSync, copyFileSync, mkdirSync, rmSync, existsSync } from "fs";
 import path, { join } from "path";
 import JSZip from "jszip";
 import { loggerGen } from "./util/logger";
@@ -42,15 +42,16 @@ function build() {
   logger.info('Build start');
 
   logger.info('removing old build file (1/4)');
-  rmSync(join(__dirname, '..', 'Ringon.zip'));
+  if (existsSync(join(__dirname, '..', 'Ringon.zip')))
+    rmSync(join(__dirname, '..', 'Ringon.zip'));
 
   logger.info('copying assets (non-ts files) to output (2/4)');
   copyDir(
     ['config', 'env'],
     ['web', 'static'],
     ['web', 'views'],
-    );
-    copyFileSync(join(__dirname, '..', 'package.json'), join(__dirname, '..', 'out', 'package.json'));
+  );
+  copyFileSync(join(__dirname, '..', 'package.json'), join(__dirname, '..', 'out', 'package.json'));
 
   logger.info('zipping output code (3/4)');
   add_zip(new JSZip(), join(__dirname, '..', 'out'))
