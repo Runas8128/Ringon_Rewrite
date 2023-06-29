@@ -3,7 +3,6 @@ import path, { join } from "path";
 import JSZip from "jszip";
 
 function add_zip(zip: JSZip, path_: string) {
-  console.log(`zipping ${path_}`);
   const dir_list = readdirSync(path_, { withFileTypes: true });
 
   dir_list
@@ -17,7 +16,8 @@ function add_zip(zip: JSZip, path_: string) {
     .filter(dir => dir.isDirectory())
     .forEach(dir => {
       const folder = zip.folder(dir.name);
-      if (folder) add_zip(folder, path.join(path_, dir.name))
+      if (folder) add_zip(folder, path.join(path_, dir.name));
+      else console.log(`[ERROR] Cannot zip ${dir.name}`);
     });
 
   return zip;
@@ -46,4 +46,4 @@ add_zip(new JSZip(), join(__dirname, '..', 'out'))
   .generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
   .then(content => { writeFileSync('Ringon.zip', content); });
 
-rmSync(join('..', 'out'), { recursive: true, force: true });
+rmSync(join(__dirname, '..', 'out'), { recursive: true, force: true });
