@@ -11,8 +11,9 @@ function assertCh(channel: any): channel is TextChannel {
 export default {
   name: 'messageCreate',
   once: false,
-  async execute({ author, attachments, channel, react }: Message) {
+  async execute(message: Message) {
+    const { author, attachments, channel } = message;
     if (!author.bot && attachments.size > 0 && assertCh(channel))
-      await react(classes[channel.name]);
+      await message.react(classes[channel.name]);
   },
 } as Event;
