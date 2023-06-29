@@ -34,16 +34,22 @@ function copyDir(...paths: string[][]) {
   });
 }
 
-copyDir(
-  ['config', 'env'],
-  ['web', 'static'],
-  ['web', 'views'],
-);
+function build() {
+  rmSync(join(__dirname, '..', 'Ringon.zip'));
 
-copyFileSync(join(__dirname, '..', 'package.json'), join(__dirname, '..', 'out', 'package.json'));
+  copyDir(
+    ['config', 'env'],
+    ['web', 'static'],
+    ['web', 'views'],
+  );
+  
+  copyFileSync(join(__dirname, '..', 'package.json'), join(__dirname, '..', 'out', 'package.json'));
+  
+  add_zip(new JSZip(), join(__dirname, '..', 'out'))
+    .generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
+    .then(content => { writeFileSync('Ringon.zip', content); });
+  
+  rmSync(join(__dirname, '..', 'out'), { recursive: true, force: true });
+}  
 
-add_zip(new JSZip(), join(__dirname, '..', 'out'))
-  .generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
-  .then(content => { writeFileSync('Ringon.zip', content); });
-
-rmSync(join(__dirname, '..', 'out'), { recursive: true, force: true });
+build();
