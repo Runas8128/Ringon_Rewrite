@@ -14,6 +14,14 @@ export const classes : { [keys: string]: string } = {
   "네메시스": "1004600682902462465"
 };
 
+export interface DeckPayload {
+  name: string;
+  clazz: string;
+  desc?: string;
+  author: string;
+  image_url: string;
+}
+
 export interface Deck {
   page_id: string;
   deck_id: number;
@@ -191,7 +199,8 @@ export class DeckList {
     );
   }
 
-  async upload(deck: Deck) {
+  async upload(deckPayload: DeckPayload) {
+    const deck = deckPayload as Deck;
     deck.version = 1;
     deck.deck_id = (this.decklist.at(-1)?.deck_id ?? 0) + 1;
     deck.timestamp = new Date()
