@@ -65,6 +65,13 @@ export class DeckList {
     this.history = undefined;
   }
 
+  load_history(guild: Guild) {
+    if (this.history) return;
+    
+    this.history = guild.channels.cache
+      .find(ch => ch.id === channel.history) as TextChannel;
+  }
+
   analyze(client: Client) {
     const total_count = this.decklist.length;
     const embed = new EmbedBuilder()
@@ -94,10 +101,7 @@ export class DeckList {
   }
 
   async _delete_deck(deck: Deck, guild: Guild) {
-    if (!this.history) {
-      this.history = guild.channels.cache
-        .find(ch => ch.id === channel.history) as TextChannel;
-    }
+    this.load_history(guild);
     await this.history?.send({ embeds: [this.make_deck_embed(deck, guild)] });
     await this.list_db.delete(deck.page_id);
   }
