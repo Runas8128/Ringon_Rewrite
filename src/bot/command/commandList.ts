@@ -17,10 +17,11 @@ import check_reaction from "./other/check_reaction";
 import latency from "./simple/latency";
 import kill from "./simple/kill";
 import prune from "./simple/prune";
+import history_test from "./simple/history_test";
 
 export const commandList: Command[] = [
   card_count, IQ, reload_db, search_card, show_studied, update_card,
   analyze_deck, new_pack, portallink, search_deck,
   check_reaction,
-  kill, latency, prune,
+  kill, latency, prune, history_test,
 ];
