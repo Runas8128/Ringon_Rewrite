@@ -31,12 +31,28 @@ export default {
       return;
     }
 
-    await interaction.followUp('승인되었습니다! 덱리 초기화 및 팩이름 변경을 실행합니다...');
+    await interaction.followUp({
+      embeds: [new EmbedBuilder()
+        .setTitle('ℹ️ 승인되었습니다!')
+        .setDescription(`덱리 초기화 및 팩이름 변경을 진행합니다.\n예상 시간: ${DB_Manager.decklist.decklist.length / 10}초`),
+      ],
+    });
+
+    const b = Date.now();
 
     await DB_Manager.decklist.update_pack(
       interaction.options.getString('이름', true),
       interaction.guild,
     );
+
+    const e = Date.now();
+
+    await interaction.followUp({
+      embeds: [new EmbedBuilder()
+        .setTitle('ℹ️ 팩 이름 변경에 성공했습니다!')
+        .setDescription(`소요 시간: ${(e - b) / 1000}초`),
+      ]
+    });
   },
 } as Command;
 

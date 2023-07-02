@@ -2,6 +2,7 @@ import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
 import { deck } from '../../config/options/notion';
 import { channel } from '../../config/options/discord';
 import { Database, Block, PropertyPayload } from '../../util/notion';
+import { timer } from '../../util/misc';
 
 export const classes : { [keys: string]: string } = {
   "엘프": "1004600679433777182",
@@ -87,6 +88,7 @@ export class DeckList {
   async update_pack(new_pack: string, guild: Guild) {
     for (const deck of this.decklist) {
       await this._delete_deck(deck, guild);
+      await timer(100);
     }
     await this.pack_block.update(new_pack);
   }
@@ -96,8 +98,8 @@ export class DeckList {
       this.history = guild.channels.cache
         .find(ch => ch.id === channel.history) as TextChannel;
     }
-    this.history?.send({ embeds: [this.make_deck_embed(deck, guild)] });
-    this.list_db.delete(deck.page_id);
+    await this.history?.send({ embeds: [this.make_deck_embed(deck, guild)] });
+    await this.list_db.delete(deck.page_id);
   }
 
   async update_deck(
