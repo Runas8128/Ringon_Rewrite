@@ -6,7 +6,7 @@ import { timer } from './misc';
 const logger = loggerGen.getLogger(__filename);
 
 export class Notion {
-  static notion: Client | undefined;
+  static notion?: Client;
 
   static init() { Notion.notion = new Client({ auth: process.env.notion }); }
 
@@ -58,7 +58,7 @@ function wrap_property(prop: PropertyPayload) {
   return data;
 }
 
-function unwrap_property(prop: Property | undefined) {
+function unwrap_property(prop?: Property) {
   if (!prop) return;
 
   if (prop.type === 'title')     return prop[prop.type]?.[0].plain_text;
@@ -67,7 +67,7 @@ function unwrap_property(prop: Property | undefined) {
   if (prop.type === 'select')    return prop.select?.name;
 }
 
-function getProperty(result: PageObjectResponse | PartialPageObjectResponse, name: string) : Property | undefined {
+function getProperty(result: PageObjectResponse | PartialPageObjectResponse, name: string) {
   if ('properties' in result)
     return result.properties[name] as Property;
 }

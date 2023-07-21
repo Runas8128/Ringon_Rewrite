@@ -35,8 +35,7 @@ function add_command_listener(client: Client) {
   client.on('interactionCreate', async interaction => {
     if (!(interaction.isChatInputCommand() || interaction.isAutocomplete())) return;
 
-    const command: Command | undefined = commandList
-      .find((cmd) => cmd.data.name === interaction.commandName);
+    const command = commandList.find((cmd) => cmd.data.name === interaction.commandName);
     if (!command) return;
 
     if (interaction.isAutocomplete()) {

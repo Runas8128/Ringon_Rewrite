@@ -5,8 +5,8 @@ import { setup_command } from '../bot/command';
 import { client_options } from '../config/options/client_options';
 
 export class Bot {
-  static token: string | undefined;
-  static client: Client | undefined;
+  static token?: string;
+  static client?: Client;
 
   static init() {
     this.token = process.env.discord;

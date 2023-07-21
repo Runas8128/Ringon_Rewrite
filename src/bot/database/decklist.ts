@@ -50,7 +50,7 @@ export class DeckList {
   decklist: Deck[];
   contrib: Contrib[];
 
-  history: TextChannel | undefined;
+  history?: TextChannel;
 
   constructor() {
     this.id_map = deck;
@@ -106,11 +106,7 @@ export class DeckList {
     await this.list_db.delete(deck.page_id);
   }
 
-  async update_deck(
-    guild: Guild,
-    id: number, updater: string,
-    desc: string | undefined = undefined, image_url: string | undefined = undefined
-  ) {
+  async update_deck(guild: Guild, id: number, updater: string, desc?: string, image_url?: string) {
     if (!desc && !image_url) return;
 
     const deck = this.decklist.find(_deck => _deck.deck_id === id);
