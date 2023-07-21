@@ -14,3 +14,4 @@ export const partials : Partials[] = [
 ];
 
 export const isTesting : boolean = false;
+export const select = <T>(prod: T, dev: T) => isTesting ? dev : prod;
