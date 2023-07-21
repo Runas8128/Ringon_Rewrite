@@ -1,11 +1,11 @@
-import { GatewayIntentsString, Partials } from 'discord.js';
+import { GatewayIntentBits, Partials } from 'discord.js';
 
-export const intents : GatewayIntentsString[] = [
-  "Guilds",
-  "GuildMessages",
-  "GuildMembers",
-  "GuildMessageReactions",
-  "MessageContent",
+export const intents : GatewayIntentBits[] = [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.GuildMembers,
+  GatewayIntentBits.GuildMessageReactions,
+  GatewayIntentBits.MessageContent,
 ];
 
 export const partials : Partials[] = [
@@ -13,5 +13,5 @@ export const partials : Partials[] = [
   Partials.Message,
 ];
 
-export const isTesting : boolean = false;
+export const isTesting : boolean = true;
 export const select = <T>(prod: T, dev: T) => isTesting ? dev : prod;
