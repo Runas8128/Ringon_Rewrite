@@ -1,10 +1,11 @@
-import { loggerGen } from "../../util/logger";
+import { Events } from "discord.js";
 import { Event } from "./Event";
+import { loggerGen } from "../../util/logger";
 
 const logger = loggerGen.getLogger(__filename);
 
 export default {
-  name: 'ready',
+  name: Events.ClientReady,
   once: true,
   async execute() {
     logger.info('Bot is ready!');

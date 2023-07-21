@@ -1,4 +1,4 @@
-import { Message, TextChannel } from "discord.js";
+import { Events, Message, TextChannel } from "discord.js";
 import { Event } from "./Event";
 import { classes } from "../database/decklist";
 
@@ -9,7 +9,7 @@ function assertCh(channel: any): channel is TextChannel {
 }
 
 export default {
-  name: 'messageCreate',
+  name: Events.MessageCreate,
   once: false,
   async execute(message: Message) {
     const { author, attachments, channel } = message;

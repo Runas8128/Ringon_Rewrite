@@ -1,9 +1,9 @@
-import { Message } from "discord.js";
-import { DB_Manager } from "../database";
+import { Events, Message } from "discord.js";
 import { Event } from "./Event";
+import { DB_Manager } from "../database";
 
 export default {
-  name: 'messageCreate',
+  name: Events.MessageCreate,
   once: false,
   async execute({ author, content, channel }: Message) {
     if (author.bot) return;

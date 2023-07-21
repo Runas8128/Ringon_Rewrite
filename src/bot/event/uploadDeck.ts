@@ -1,9 +1,9 @@
-import { GuildEmoji, Message, MessageReaction, ReactionEmoji, TextChannel, User } from "discord.js";
-import { Event } from "./Event";
-import { classes } from "../database/decklist";
-import { DB_Manager } from "../database";
-import { timer } from "../../util/misc";
+import { Events, GuildEmoji, Message, MessageReaction, ReactionEmoji, TextChannel, User } from "discord.js";
 import { EmbedBuilder } from "@discordjs/builders";
+import { Event } from "./Event";
+import { DB_Manager } from "../database";
+import { classes } from "../database/decklist";
+import { timer } from "../../util/misc";
 
 class DeckUploader {
   origin: Message;
@@ -82,7 +82,7 @@ function assert(channel: any, author: User, emoji: GuildEmoji | ReactionEmoji, u
 }
 
 export default {
-  name: 'messageReactionAdd',
+  name: Events.MessageReactionAdd,
   once: false,
   async execute({ message, emoji }: MessageReaction, user: User) {
     if (message.partial) message = await message.fetch();

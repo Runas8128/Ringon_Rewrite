@@ -1,4 +1,4 @@
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, Events, Interaction } from "discord.js";
 import { ButtonBuilder } from "@discordjs/builders";
 import { Event } from "./Event";
 
@@ -29,9 +29,9 @@ class ClickEventHandler {
 export const eventHandler = new ClickEventHandler();
 
 export default {
-  name: 'interactionCreate',
+  name: Events.InteractionCreate,
   once: false,
-  async execute(interaction) {
+  async execute(interaction: Interaction) {
     if (!interaction.isButton()) return;
 
     const button = eventHandler.button_map.find(obj =>
