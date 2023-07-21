@@ -2,7 +2,7 @@ import { Client } from 'discord.js';
 
 import { setup_event } from '../bot/event';
 import { setup_command } from '../bot/command';
-import { intents, partials, isTesting } from '../config/options/client_options';
+import { intents, partials } from '../config/options/client_options';
 
 export class Bot {
   static token: string | undefined;
@@ -22,13 +22,5 @@ export class Bot {
     while (!this.client);
 
     await this.client.login(this.token);
-
-    if (!isTesting) return;
-    this.client.on('ready', async () => {
-      this.client!.user?.setPresence({
-        status: 'dnd',
-        activities: [{ name: '버그 수정' }],
-      });
-    });
   }
 }
