@@ -14,5 +14,5 @@ export const client_options = {
   ],
 }
 
-export const isTesting : boolean = true;
+export const isTesting : boolean = false;
 export const select = <T>(prod: T, dev: T) => isTesting ? dev : prod;
