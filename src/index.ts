@@ -6,7 +6,7 @@ import { loggerGen } from "./util/logger";
 loggerGen.setRoot(__dirname);
 const logger = loggerGen.getLogger(__filename);
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   logger.error(error.stack);
 });
 

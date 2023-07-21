@@ -45,15 +45,15 @@ export class Detect {
   }
 
   get_result(target: string) {
-    const full_detect = this.full.find((obj) => obj.target === target);
+    const full_detect = this.full.find(obj => obj.target === target);
     if (full_detect) {
       return full_detect.result;
     }
 
-    const prob_detect = this.prob.filter((obj) => obj.target === target);
+    const prob_detect = this.prob.filter(obj => obj.target === target);
     if (prob_detect) {
-      const result_list = prob_detect.map((obj) => obj.result);
-      const ratio_list = prob_detect.map((obj) => obj.ratio);
+      const result_list = prob_detect.map(obj => obj.result);
+      const ratio_list = prob_detect.map(obj => obj.ratio);
       return select_weight(result_list, ratio_list);
     }
   }
