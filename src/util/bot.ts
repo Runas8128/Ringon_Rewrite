@@ -2,7 +2,7 @@ import { Client } from 'discord.js';
 
 import { setup_event } from '../bot/event';
 import { setup_command } from '../bot/command';
-import { intents, partials } from '../config/options/client_options';
+import { client_options } from '../config/options/client_options';
 
 export class Bot {
   static token: string | undefined;
@@ -11,7 +11,7 @@ export class Bot {
   static init() {
     this.token = process.env.discord;
 
-    const client = new Client({ intents, partials });
+    const client = new Client(client_options);
     setup_event(client);
     if (this.token) setup_command(client, this.token);
 
