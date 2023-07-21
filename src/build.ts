@@ -1,7 +1,10 @@
 import { readFileSync, readdirSync, writeFileSync, copyFileSync, mkdirSync, rmSync, existsSync } from "fs";
 import path, { join } from "path";
+import * as ReadLine from "readline/promises";
+import { stdin, stdout } from "process";
 import JSZip from "jszip";
 import { loggerGen } from "./util/logger";
+import { isTesting } from "./config/options/client_options";
 
 loggerGen.setRoot(join(__dirname, 'index.ts'));
 const logger = loggerGen.getLogger(__filename);
@@ -38,6 +41,20 @@ function copyDir(...paths: string[][]) {
   });
 }
 
+async function valid_check() {
+  if (!isTesting) return;
+
+  logger.warn("testing flag turned on!!");
+  const readline = ReadLine.createInterface({ input: stdin, output: stdout });
+  const answer = await readline.question("Would you like to build it anyway? (Y/n) ");
+  readline.close();
+  if (answer.toLocaleLowerCase() === 'n') {
+    logger.info("Aborting...");
+    process.kill(1);
+  }
+  logger.warn("This build is dev only!!");
+}
+
 function build() {
   logger.info('Build start');
 
@@ -62,6 +79,6 @@ function build() {
   rmSync(join(__dirname, '..', 'out'), { recursive: true, force: true });
 
   logger.info('Build Success!!');
-}  
+}
 
-build();
+valid_check().then(build).catch(() => {});
