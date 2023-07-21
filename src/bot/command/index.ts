@@ -1,6 +1,5 @@
 import { Client, PermissionFlagsBits, REST, Routes } from "discord.js";
 
-import { Command } from "./Command";
 import { commandList } from "./commandList";
 import { client, guild } from "../../config/options/discord";
 import { loggerGen } from "../../util/logger";
