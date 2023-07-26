@@ -8,6 +8,7 @@ import show_studied from "./DB/show_studied";
 import update_card from "./DB/update_card";
 
 import history_test from "./debug/history_test";
+import decklist_test from "./debug/decklist_test";
 
 import analyze_deck from "./deck/analyze_deck";
 import new_pack from "./deck/new_pack";
@@ -20,9 +21,9 @@ import latency from "./simple/latency";
 import kill from "./simple/kill";
 import prune from "./simple/prune";
 
-export const commandList: Command[] = [
+export const fullCmdList: Command[] = [
   card_count, IQ, reload_db, search_card, show_studied, update_card,
-  history_test,
+  history_test, decklist_test,
   analyze_deck, new_pack, portallink, search_deck,
   check_reaction,
   kill, latency, prune,

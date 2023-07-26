@@ -1,19 +1,23 @@
 import { Client, PermissionFlagsBits, REST, Routes } from "discord.js";
 
-import { commandList } from "./commandList";
+import { Command } from "./Command";
+import { fullCmdList } from "./commandList";
 import { client, guild } from "../../config/options/discord";
 import { loggerGen } from "../../util/logger";
 import { reply } from "../../util/misc";
+import { isTesting } from "../../config/options/client_options";
 
 const logger = loggerGen.getLogger(__filename);
 
 function preprocess() {
-  commandList
+  fullCmdList
     .filter(c => c.perm === 'admin')
     .forEach(c => c.data.setDefaultMemberPermissions(PermissionFlagsBits.Administrator));
+  
+  return isTesting ? fullCmdList : fullCmdList.filter(c => c.perm === 'dev');
 }
 
-async function deploy_commands(token: string) {
+async function deploy_commands(token: string, commandList: Command[]) {
   logger.info('deploying commands');
 
   try {
@@ -30,7 +34,7 @@ async function deploy_commands(token: string) {
   }
 }
 
-function add_command_listener(client: Client) {
+function add_command_listener(client: Client, commandList: Command[]) {
   client.on('interactionCreate', async interaction => {
     if (!(interaction.isChatInputCommand() || interaction.isAutocomplete())) return;
 
@@ -56,7 +60,7 @@ function add_command_listener(client: Client) {
 }
 
 export function setup_command(client: Client, token: string) {
-  preprocess();
-  deploy_commands(token);
-  add_command_listener(client);
+  const list = preprocess();
+  deploy_commands(token, list);
+  add_command_listener(client, list);
 }
