@@ -3,7 +3,7 @@ import { Command } from "../Command";
 import { DB_Manager } from "../../database";
 
 export default {
-  perm: 'member',
+  perm: 'dev',
   data: new SlashCommandBuilder()
     .setName('역사관체크')
     .setDescription('역사관 채널이 잘 잡혔는지 확인합니다.'),
