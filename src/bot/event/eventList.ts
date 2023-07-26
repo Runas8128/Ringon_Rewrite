@@ -7,5 +7,5 @@ import uploadDeck from "./uploadDeck";
 import memberLeft from "./memberLeft";
 
 export const eventList: Event[] = [
-  ready, btnClick, detect, detectDeckImg, uploadDeck, memberLeft
+  ready, btnClick, detect, memberLeft
 ];
