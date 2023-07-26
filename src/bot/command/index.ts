@@ -14,7 +14,7 @@ function preprocess() {
     .filter(c => c.perm === 'admin')
     .forEach(c => c.data.setDefaultMemberPermissions(PermissionFlagsBits.Administrator));
   
-  return isTesting ? fullCmdList : fullCmdList.filter(c => c.perm === 'dev');
+  return isTesting ? fullCmdList : fullCmdList.filter(c => c.perm !== 'dev');
 }
 
 async function deploy_commands(token: string, commandList: Command[]) {
