@@ -11,13 +11,19 @@ export default {
   async execute(interaction) {
     const iCh = interaction.channel as GuildTextBasedChannel;
     if (!Object.keys(classes).includes(iCh.name)) {
-      await interaction.reply('⚠ ');
+      await interaction.reply({
+        content: '⚠ 덱 등록은 해당 클래스의 채널에서만 가능합니다.',
+        ephemeral: true,
+      });
       return;
     }
 
     const att0 = interaction.targetMessage.attachments.first();
     if (!att0) {
-      await interaction.reply('⚠ ');
+      await interaction.reply({
+        content: '⚠ 덱의 사진을 첨부한 메시지에서 실행해주세요!',
+        ephemeral: true,
+      });
       return;
     }
 
@@ -57,7 +63,7 @@ export default {
       image_url: att0.url,
     });
 
-    await interaction.followUp({
+    await rst.reply({
       content: '덱 등록을 성공적으로 마쳤습니다!',
       allowedMentions: { repliedUser: false },
     });
