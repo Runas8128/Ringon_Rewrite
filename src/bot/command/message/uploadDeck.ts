@@ -57,7 +57,7 @@ export default {
       image_url: att0.url,
     });
 
-    await interaction.reply({
+    await interaction.followUp({
       content: '덱 등록을 성공적으로 마쳤습니다!',
       allowedMentions: { repliedUser: false },
     });
