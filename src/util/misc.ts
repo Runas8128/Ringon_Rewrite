@@ -6,12 +6,12 @@ export function isRetryable(error: any) {
     (error instanceof APIResponseError && error.code === APIErrorCode.RateLimited);
 }
 
-export function reply(interaction: ChatInputCommandInteraction, msg: string | MessagePayload | InteractionReplyOptions) {
-  if (interaction.replied || interaction.deferred) {
-    return interaction.editReply(msg);
+export async function reply(interaction: ChatInputCommandInteraction, msg: string | MessagePayload | InteractionReplyOptions) {
+  try {
+    await interaction.reply(msg);
   }
-  else {
-    return interaction.reply(msg);
+  catch (e) {
+    await interaction.editReply(msg);
   }
 }
 

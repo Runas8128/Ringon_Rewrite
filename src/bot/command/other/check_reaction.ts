@@ -18,15 +18,19 @@ export default {
       .setName('emoji')
       .setDescription('개별적으로 체크할 이모지들입니다. 공백으로 구분해 적어주시면 됩니다.')),
   async execute(interaction) {
-    if (!interaction.guild)
-      return interaction.reply('분석하려는 메시지의 서버 내에서 사용해주세요!');
+    if (!interaction.guild) {
+      await interaction.reply('분석하려는 메시지의 서버 내에서 사용해주세요!');
+      return;
+    }
 
     const channels = interaction.client.channels;
     const getOpt = (opt: string) => interaction.options.getString(opt) ?? '';
 
     const messagePromise = parseURL(getOpt('url'), channels) ?? parseID(getOpt('id'), channels);
-    if (!messagePromise)
-      return interaction.reply('올바른 메시지 링크를 입력해주세요.');
+    if (!messagePromise) {
+      await interaction.reply('올바른 메시지 링크를 입력해주세요.');
+      return;
+    }
 
     const message = await messagePromise;
     const indi_emoji = interaction.options.getString('emoji') || '👍 👎';
@@ -47,7 +51,7 @@ export default {
         value: result[emoji].join(', ') || '없음',
       })
     );
-    interaction.reply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   },
 } as Command;
 
