@@ -7,18 +7,16 @@ const logger = loggerGen.getLogger(__filename);
 
 async function deploy_commands(client: Client) {
   logger.info('deploying message commands');
-  let loaded = 0;
 
   await Promise.all(
     mcList.map(
       mc => client.application?.commands
         .create({ name: mc.name, type: ApplicationCommandType.Message }, guild)
-        .then(v => { loaded++ })
         .catch(r => { logger.warn(`An error occured while loading ${mc.name}: ${r}`); })
     )
   );
 
-  logger.info(`successfully loaded ${loaded}/${mcList.length} commands`);
+  logger.info(`successfully loaded /${mcList.length} commands`);
 }
 
 function add_command_listener(client: Client) {
