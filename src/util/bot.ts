@@ -14,11 +14,9 @@ export class Bot {
 
     const client = new Client(client_options);
     setup_event(client);
-    if (this.token) {
-      setup_command(client, this.token);
-      setup_message_command(client, this.token);
-    }
-
+    setup_command(client);
+    setup_message_command(client);
+    
     this.client = client;
   }
 

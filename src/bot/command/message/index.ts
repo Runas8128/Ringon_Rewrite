@@ -1,25 +1,24 @@
-import { Client, REST, Routes } from "discord.js";
-import { client, guild } from "../../../config/options/discord";
+import { ApplicationCommandType, Client } from "discord.js";
 import { loggerGen } from "../../../util/logger";
 import { mcList } from "./mcList";
+import { guild } from "../../../config/options/discord";
 
 const logger = loggerGen.getLogger(__filename);
 
-async function deploy_commands(token: string) {
+async function deploy_commands(client: Client) {
   logger.info('deploying message commands');
+  let loaded = 0;
 
-  try {
-    const rest = new REST({ version: '10' }).setToken(token);
-    const data = await rest.put(
-      Routes.applicationGuildCommands(client, guild),
-      { body: mcList.map(command => ({ name: command.name, type: 3 })) },
-    );
-    if (((_: unknown): _ is any[] => true)(data))
-      logger.info(`Successfully deployed ${data.length} message commands.`);
-  }
-  catch (error) {
-    logger.error(`Something bad happened. ${error}`);
-  }
+  await Promise.all(
+    mcList.map(
+      mc => client.application?.commands
+        .create({ name: mc.name, type: ApplicationCommandType.Message }, guild)
+        .then(v => { loaded++ })
+        .catch(r => { logger.warn(`An error occured while loading ${mc.name}: ${r}`); })
+    )
+  );
+
+  logger.info(`successfully loaded ${loaded}/${mcList.length} commands`);
 }
 
 function add_command_listener(client: Client) {
@@ -33,8 +32,8 @@ function add_command_listener(client: Client) {
   });
 }
 
-export function setup_message_command(client: Client, token: string) {
-  deploy_commands(token);
+export function setup_message_command(client: Client) {
+  deploy_commands(client);
   add_command_listener(client);
 }
 

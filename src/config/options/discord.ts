@@ -1,6 +1,5 @@
 import { select } from './client_options';
 
-export const client = select("765462304350666762", "850019210867376158");
 export const guild = select("758478112979288094", "823359663973072957");
 
 export const role = {

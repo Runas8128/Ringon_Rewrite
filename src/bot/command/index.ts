@@ -1,11 +1,11 @@
-import { Client, PermissionFlagsBits, REST, Routes } from "discord.js";
+import { Client, PermissionFlagsBits } from "discord.js";
 
 import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
-import { client, guild } from "../../config/options/discord";
 import { loggerGen } from "../../util/logger";
 import { reply } from "../../util/misc";
 import { isTesting } from "../../config/options/client_options";
+import { guild } from "../../config/options/discord";
 
 const logger = loggerGen.getLogger(__filename);
 
@@ -17,21 +17,20 @@ function preprocess() {
   return isTesting ? fullCmdList : fullCmdList.filter(c => c.perm !== 'dev');
 }
 
-async function deploy_commands(token: string, commandList: Command[]) {
+async function deploy_commands(client: Client, commandList: Command[]) {
   logger.info('deploying commands');
+  let loaded = 0;
+  
+  await Promise.all(
+    commandList.map(
+      ({ data }) => client.application?.commands
+        .create(data.toJSON(), guild)
+        .then(v => { loaded++; })
+        .catch(r => { logger.warn(`An error occured while loading ${data.name}: ${r}`); })
+    )
+  );
 
-  try {
-    const rest = new REST({ version: '10' }).setToken(token);
-    const data = await rest.put(
-      Routes.applicationGuildCommands(client, guild),
-      { body: commandList.map(command => command.data.toJSON()) },
-    );
-    if (((_: unknown): _ is any[] => true)(data))
-      logger.info(`Successfully deployed ${data.length} commands.`);
-  }
-  catch (error) {
-    logger.error(`Something bad happened. ${error}`);
-  }
+  logger.info(`successfully loaded ${loaded}/${commandList.length} commands`);
 }
 
 function add_command_listener(client: Client, commandList: Command[]) {
@@ -59,8 +58,8 @@ function add_command_listener(client: Client, commandList: Command[]) {
   });
 }
 
-export function setup_command(client: Client, token: string) {
+export function setup_command(client: Client) {
   const list = preprocess();
-  deploy_commands(token, list);
+  deploy_commands(client, list);
   add_command_listener(client, list);
 }
