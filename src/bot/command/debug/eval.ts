@@ -13,7 +13,10 @@ export default {
       .setRequired(true)
     ),
   async execute(interaction) {
+    await interaction.reply('evaluating...');
     const code = interaction.options.getString('code', true);
-    await interaction.reply(`\`\`\`js\n${eval(transpile(code))} \`\`\``);
+    const raw = eval(transpile(code));
+    const result = await Promise.resolve(raw);
+    await interaction.editReply(`\`\`\`js\n${result} \`\`\``);
   },
 } as Command;
