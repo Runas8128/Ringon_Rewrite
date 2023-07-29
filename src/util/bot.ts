@@ -6,10 +6,9 @@ import { client_options, isTesting } from '../config/options/client_options';
 import { setup_message_command } from '../bot/command/message';
 
 export class Bot {
-  static client?: Client = new Client(client_options);
+  static client: Client = new Client(client_options);
 
   static async login() {
-    while (!this.client);
     setup_event(this.client);
     
     await this.client.login(process.env.discord);
