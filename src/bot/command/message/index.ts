@@ -8,15 +8,21 @@ const logger = loggerGen.getLogger(__filename);
 async function deploy_commands(client: Client) {
   logger.info('deploying message commands');
 
-  await Promise.all(
-    mcList.map(
-      mc => client.application?.commands
-        .create({ name: mc.name, type: ApplicationCommandType.Message }, guild)
-        .catch(r => { logger.warn(`An error occured while loading ${mc.name}: ${r}`); })
-    )
-  );
+  const result = await Promise.all(mcList.map(
+    mc => (async () => {
+      try {
+        await client.application?.commands
+          .create({ name: mc.name, type: ApplicationCommandType.Message }, guild);
+        return true;
+      }
+      catch (r) {
+        logger.warn(`An error occured while loading ${mc.name}: ${r}`);
+        return false;
+      }
+    })()
+  ));
 
-  logger.info(`successfully loaded ${mcList.length} commands`);
+  logger.info(`successfully loaded ${result.filter(r => r).length} commands`);
 }
 
 function add_command_listener(client: Client) {
@@ -34,4 +40,3 @@ export function setup_message_command(client: Client) {
   deploy_commands(client);
   add_command_listener(client);
 }
-

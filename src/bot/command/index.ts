@@ -19,15 +19,21 @@ function preprocess() {
 async function deploy_commands(client: Client, commandList: Command[]) {
   logger.info('deploying commands');
   
-  await Promise.all(
-    commandList.map(
-      ({ data }) => client.application?.commands
-        .create(data.toJSON(), guild)
-        .catch(r => { logger.warn(`An error occured while loading ${data.name}: ${r}`); })
-    )
-  );
+  const result = await Promise.all(commandList.map(
+    ({ data }) => (async () => {
+      try {
+        await client.application?.commands
+          .create(data.toJSON(), guild);
+        return true;
+      }
+      catch (r) {
+        logger.warn(`An error occured while loading ${data.name}: ${r}`);
+        return false;
+      }
+    })()
+  ));
 
-  logger.info(`successfully loaded ${commandList.length} commands`);
+  logger.info(`successfully loaded ${result.filter(r => r).length} commands`);
 }
 
 function add_command_listener(client: Client, commandList: Command[]) {
