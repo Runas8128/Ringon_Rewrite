@@ -1,6 +1,5 @@
 import path from 'path';
 import winston from 'winston';
-import { colors } from './config/options/logger_options';
 
 const { combine, timestamp, printf, colorize, label } = winston.format;
 
@@ -24,8 +23,15 @@ function format_base(_label: string) {
 function format_console(_label: string) {
   return combine(
     format_base(_label),
-    printf(info => colorize({ colors })
-      .colorize(info.level, `[ ${info.label} ] ${[info.timestamp]} ${info.level}: ${info.message}`)
+    printf(info =>
+      colorize({
+        colors: {
+          error: 'bold red',
+          warn: 'italic yellow',
+          info: 'bold blue',
+          debug: 'green',
+        }
+      }).colorize(info.level, `[ ${info.label} ] ${[info.timestamp]} ${info.level}: ${info.message}`)
     ),
   );
 }
