@@ -3,10 +3,10 @@ import path, { join } from "path";
 import * as ReadLine from "readline/promises";
 import { stdin, stdout } from "process";
 import JSZip from "jszip";
-import { loggerGen } from "./util/logger";
+import { loggerGen } from "./logger";
 import { isTesting } from "./config/options/client_options";
 
-loggerGen.setRoot(join(__dirname, 'index.ts'));
+loggerGen.root = join(__dirname, 'index.ts');
 const logger = loggerGen.getLogger(__filename);
 
 function add_zip(zip: JSZip, path_: string) {

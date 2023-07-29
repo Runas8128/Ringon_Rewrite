@@ -6,7 +6,7 @@ import { loggerGen } from "./logger";
 import { loadNotion } from "./notion";
 import { app } from "./web";
 
-loggerGen.setRoot(__dirname);
+loggerGen.root = __dirname;
 const logger = loggerGen.getLogger(__filename);
 
 process.on('uncaughtException', error => {

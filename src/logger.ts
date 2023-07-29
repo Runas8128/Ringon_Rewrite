@@ -21,31 +21,22 @@ function format_base(_label: string) {
 }
 
 function format_console(_label: string) {
+  const colors = {
+    error: 'bold red',
+    warn: 'italic yellow',
+    info: 'bold blue',
+    debug: 'green',
+  };
+
   return combine(
     format_base(_label),
-    printf(info =>
-      colorize({
-        colors: {
-          error: 'bold red',
-          warn: 'italic yellow',
-          info: 'bold blue',
-          debug: 'green',
-        }
-      }).colorize(info.level, `[ ${info.label} ] ${[info.timestamp]} ${info.level}: ${info.message}`)
-    ),
+    printf(info => colorize({ colors })
+      .colorize(info.level, `[ ${info.label} ] ${[info.timestamp]} ${info.level}: ${info.message}`)),
   );
 }
 
 class Logger {
-  root: string;
-
-  constructor() {
-    this.root = '';
-  }
-
-  setRoot(root: string) {
-    this.root = root;
-  }
+  root: string = '';
 
   getLogger(file: string) {
     const _label = path.relative(this.root, file);
