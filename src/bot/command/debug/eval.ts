@@ -14,6 +14,6 @@ export default {
     ),
   async execute(interaction) {
     const code = interaction.options.getString('code', true);
-    await interaction.reply(eval(transpile(code)));
+    await interaction.reply(`\`\`\`js\n${eval(transpile(code))} \`\`\``);
   },
 } as Command;
