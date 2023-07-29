@@ -3,7 +3,6 @@ import { Command } from "../Command";
 import { DB_Manager } from "../../database";
 import { Card } from "../../database/cards";
 import CardView from "../../view/CardView";
-import { reply } from "../../../util/misc";
 
 export default {
   perm: 'member',
@@ -29,10 +28,7 @@ export default {
     const first_not_match_idx = list.findIndex(deck => kw_pred(deck) === 0);
     list.splice(first_not_match_idx);
 
-    await reply(
-      interaction,
-      new CardView(list).get_updated_msg(),
-    );
+    await interaction.reply(new CardView(list).get_updated_msg());
   },
   async autocompleter(interaction) {
     const focusdVar = interaction.options.getFocused(true);
