@@ -36,7 +36,7 @@ function add_command_listener(client: Client) {
   });
 }
 
-export function setup_message_command(client: Client) {
-  deploy_commands(client);
+export async function setup_message_command(client: Client) {
+  await deploy_commands(client);
   add_command_listener(client);
 }

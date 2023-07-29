@@ -63,8 +63,8 @@ function add_command_listener(client: Client, commandList: Command[]) {
   });
 }
 
-export function setup_command(client: Client) {
+export async function setup_command(client: Client) {
   const list = preprocess();
-  deploy_commands(client, list);
+  await deploy_commands(client, list);
   add_command_listener(client, list);
 }
