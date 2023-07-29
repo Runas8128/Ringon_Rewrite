@@ -3,7 +3,6 @@ import { Command } from "../Command";
 import { DB_Manager } from "../../database";
 import { Deck, classes } from "../../database/decklist";
 import DecklistView from "../../view/DecklistView";
-import { reply } from "../../../util/misc";
 
 export default {
   perm: 'member',
@@ -44,10 +43,8 @@ export default {
     if (author) decks = decks.filter(deck => deck.author === author.id);
     if (clazz) decks = decks.filter(deck => deck.clazz === clazz);
 
-    await reply(
-      interaction,
-      new DecklistView(decks, interaction.guild!).get_updated_msg(),
-    );
+    const dlView = new DecklistView(decks, interaction.guild!);
+    await interaction.reply(dlView.get_updated_msg());
   },
   async autocompleter(interaction) {
     const focusdVar = interaction.options.getFocused(true);
