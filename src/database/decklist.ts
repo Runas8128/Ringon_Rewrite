@@ -1,7 +1,7 @@
 import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
-import { deck } from '../../config/options/notion';
-import { channel } from '../../config/options/discord';
-import { Database, Block, PropertyPayload } from '../../util/notion';
+import { deck } from '../config/options/notion';
+import { channel } from '../config/options/discord';
+import { Database, Block, PropertyPayload } from '../notion';
 import { setTimeout } from 'timers/promises';
 
 export const classes : { [keys: string]: string } = {

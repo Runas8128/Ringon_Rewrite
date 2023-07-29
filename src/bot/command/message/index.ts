@@ -1,5 +1,5 @@
 import { ApplicationCommandType, Client } from "discord.js";
-import { loggerGen } from "../../../util/logger";
+import { loggerGen } from "../../../logger";
 import { mcList } from "./mcList";
 import { guild } from "../../../config/options/discord";
 

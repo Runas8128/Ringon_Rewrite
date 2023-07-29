@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { Command } from "../Command";
-import { DB_Manager } from "../../database";
-import { Card } from "../../database/cards";
+import { DB_Manager } from "../../../database";
+import { Card } from "../../../database/cards";
 import CardView from "../../view/CardView";
 
 export default {

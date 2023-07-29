@@ -2,7 +2,7 @@ import { Cards } from "./cards";
 import { DeckList } from "./decklist";
 import { Detect } from "./detect";
 
-import { loggerGen } from "../../util/logger";
+import { loggerGen } from "../logger";
 
 const logger = loggerGen.getLogger(__filename);
 type dbName = 'detect' | 'decklist' | 'cards';

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 import { Command } from "../Command";
-import { DB_Manager } from "../../database";
+import { DB_Manager } from "../../../database";
 
 export default {
   perm: 'member',

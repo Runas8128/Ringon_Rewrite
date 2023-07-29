@@ -1,6 +1,6 @@
 import { Client, UnknownHTTPResponseError } from '@notionhq/client';
 import { PageObjectResponse, PartialPageObjectResponse, QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { loggerGen } from './logger';
+import { loggerGen } from '../logger';
 import { setTimeout } from 'timers/promises';
 
 const logger = loggerGen.getLogger(__filename);

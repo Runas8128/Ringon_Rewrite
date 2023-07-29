@@ -2,9 +2,9 @@ import { ButtonInteraction, ButtonStyle, ComponentType, Guild } from "discord.js
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder } from "@discordjs/builders";
 import UpDownView from "./UpDownView";
 import { eventHandler } from "../event/btnClick";
-import { DB_Manager } from "../database";
-import { Deck } from "../database/decklist";
-import { classes } from "../../bot/database/decklist";
+import { DB_Manager } from "../../database";
+import { Deck } from "../../database/decklist";
+import { classes } from "../../database/decklist";
 
 export default class extends UpDownView {
   decks: Deck[];

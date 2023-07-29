@@ -1,8 +1,8 @@
 import { Events, GuildEmoji, Message, MessageReaction, ReactionEmoji, TextChannel, User } from "discord.js";
 import { EmbedBuilder } from "@discordjs/builders";
 import { Event } from "./Event";
-import { DB_Manager } from "../database";
-import { classes } from "../database/decklist";
+import { DB_Manager } from "../../database";
+import { classes } from "../../database/decklist";
 import { setTimeout } from "timers/promises";
 
 class DeckUploader {

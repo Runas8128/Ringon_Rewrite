@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 import { Express } from 'express';
 import { pageList } from './pageList';
-import { Bot } from '../util/bot';
+import { Bot } from '../bot';
 
 class App {
   app: Express;

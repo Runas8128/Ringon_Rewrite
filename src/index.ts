@@ -1,9 +1,9 @@
 import path from "path";
 import { config } from "dotenv";
-import { DB_Manager } from "./bot/database";
 import { select } from "./config/options/client_options";
-import { loggerGen } from "./util/logger";
-import { loadNotion } from "./util/notion";
+import { DB_Manager } from "./database";
+import { loggerGen } from "./logger";
+import { loadNotion } from "./notion";
 import { app } from "./web";
 
 loggerGen.setRoot(__dirname);

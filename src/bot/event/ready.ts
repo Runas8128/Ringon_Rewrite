@@ -1,6 +1,6 @@
 import { Events } from "discord.js";
 import { Event } from "./Event";
-import { loggerGen } from "../../util/logger";
+import { loggerGen } from "../../logger";
 
 const logger = loggerGen.getLogger(__filename);
 

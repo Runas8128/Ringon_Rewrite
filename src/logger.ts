@@ -1,6 +1,6 @@
 import path from 'path';
 import winston from 'winston';
-import { colors } from '../config/options/logger_options';
+import { colors } from './config/options/logger_options';
 
 const { combine, timestamp, printf, colorize, label } = winston.format;
 

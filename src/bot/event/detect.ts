@@ -1,6 +1,6 @@
 import { Events, Message } from "discord.js";
 import { Event } from "./Event";
-import { DB_Manager } from "../database";
+import { DB_Manager } from "../../database";
 
 export default {
   name: Events.MessageCreate,

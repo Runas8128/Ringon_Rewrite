@@ -1,7 +1,7 @@
 import { Events, GuildMember, PartialGuildMember, TextChannel } from "discord.js";
 import { Event } from "./Event";
 import { channel } from "../../config/options/discord";
-import { loggerGen } from "../../util/logger";
+import { loggerGen } from "../../logger";
 
 const logger = loggerGen.getLogger(__filename);
 

@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { EmbedBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
-import { DB_Manager } from "../../database";
+import { DB_Manager } from "../../../database";
 
 export default {
   perm: 'admin',

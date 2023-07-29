@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { Command } from "../Command";
-import { DB_Manager } from "../../database";
-import { Deck, classes } from "../../database/decklist";
+import { DB_Manager } from "../../../database";
+import { Deck, classes } from "../../../database/decklist";
 import DecklistView from "../../view/DecklistView";
 
 export default {

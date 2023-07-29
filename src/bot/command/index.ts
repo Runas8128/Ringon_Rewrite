@@ -2,7 +2,7 @@ import { Client, PermissionFlagsBits } from "discord.js";
 
 import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
-import { loggerGen } from "../../util/logger";
+import { loggerGen } from "../../logger";
 import { isTesting } from "../../config/options/client_options";
 import { guild } from "../../config/options/discord";
 

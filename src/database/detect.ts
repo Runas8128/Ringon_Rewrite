@@ -1,5 +1,5 @@
-import { detect } from '../../config/options/notion';
-import { Database } from '../../util/notion';
+import { detect } from '../config/options/notion';
+import { Database } from '../notion';
 
 function select_weight<T>(targets: Array<T>, weights: Array<number>): T {
   const total_weight = weights.reduce((prev, curr) => prev + curr, 0);

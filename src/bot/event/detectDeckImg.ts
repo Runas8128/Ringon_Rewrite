@@ -1,6 +1,6 @@
 import { Events, Message, TextChannel } from "discord.js";
 import { Event } from "./Event";
-import { classes } from "../database/decklist";
+import { classes } from "../../database/decklist";
 
 function assertCh(channel: any): channel is TextChannel {
   return channel instanceof TextChannel &&
