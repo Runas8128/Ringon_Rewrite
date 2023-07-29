@@ -10,10 +10,8 @@ export default {
     let new_log = '';
     req.on('readable', () => {
       let chunk;
-
-      while ((chunk = req.read()) !== null) new_log += chunk;
-    });
-    req.on('end', () => {
+      while (chunk = req.read()) new_log += chunk;
+    }).on('end', () => {
       log.push(JSON.parse(new_log));
     });
   },
