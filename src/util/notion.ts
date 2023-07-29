@@ -5,14 +5,9 @@ import { setTimeout } from 'timers/promises';
 
 const logger = loggerGen.getLogger(__filename);
 
-export class Notion {
-  static notion?: Client;
-
-  static init() { Notion.notion = new Client({ auth: process.env.notion }); }
-
-  static async pages() { while (!Notion.notion); return Notion.notion.pages; }
-  static async databases() { while (!Notion.notion); return Notion.notion?.databases; }
-  static async blocks() { while (!Notion.notion); return Notion.notion?.blocks; }
+let Notion: Client | undefined = undefined;
+export function loadNotion() {
+  Notion = new Client({ auth: process.env.notion });
 }
 
 type propType = 'page_id' | 'rich_text' | 'title' | 'number' | 'select';
@@ -86,7 +81,7 @@ export class Database {
         properties[stuff.name] = wrap_property(stuff);
       }
 
-      return (await Notion.pages()).create({
+      return Notion!.pages.create({
         parent: {
           type: 'database_id',
           database_id: this.database_id,
@@ -112,7 +107,7 @@ export class Database {
       properties[stuff.name] = wrap_property(stuff);
     }
 
-    return (await Notion.pages()).update({
+    return Notion!.pages.update({
       page_id: page_id,
       properties: properties,
     });
@@ -124,7 +119,7 @@ export class Database {
     const data: any[] = [];
 
     do {
-      pages = await (await Notion.databases()).query({
+      pages = await Notion!.databases.query({
         database_id: this.database_id,
         start_cursor: start_cursor ?? undefined,
       });
@@ -143,7 +138,7 @@ export class Database {
 
   async delete(page_id: string) {
     try {
-      await (await Notion.blocks()).delete({ block_id: page_id });
+      await Notion!.blocks.delete({ block_id: page_id });
     }
     catch (err) {
       if (!(err instanceof UnknownHTTPResponseError)) throw err;
@@ -171,7 +166,7 @@ export class Block {
   }
 
   async get_text() {
-    const result = await (await Notion.blocks()).retrieve({
+    const result = await Notion!.blocks.retrieve({
       block_id: this.block_id,
     });
 
@@ -180,7 +175,7 @@ export class Block {
   }
 
   async update(new_string: string) {
-    await (await Notion.blocks()).update({
+    await Notion!.blocks.update({
       block_id: this.block_id,
       paragraph: { 'rich_text': [{ 'text': { 'content': new_string } }] },
     });
