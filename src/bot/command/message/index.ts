@@ -16,7 +16,7 @@ async function deploy_commands(client: Client) {
     )
   );
 
-  logger.info(`successfully loaded /${mcList.length} commands`);
+  logger.info(`successfully loaded ${mcList.length} commands`);
 }
 
 function add_command_listener(client: Client) {
