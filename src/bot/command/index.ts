@@ -3,7 +3,6 @@ import { Client, PermissionFlagsBits } from "discord.js";
 import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
 import { loggerGen } from "../../util/logger";
-import { reply } from "../../util/misc";
 import { isTesting } from "../../config/options/client_options";
 import { guild } from "../../config/options/discord";
 
@@ -47,10 +46,12 @@ function add_command_listener(client: Client, commandList: Command[]) {
       await command.execute(interaction);
     }
     catch(err) {
-      await reply(interaction, {
+      const notifyContent = {
         content: `${interaction.commandName} 커맨드를 처리하는 동안 오류가 발생했습니다.`,
         ephemeral: true,
-      });
+      };
+      if (interaction.deferred || interaction.replied) await interaction.editReply(notifyContent);
+      else await interaction.reply(notifyContent);
       throw err;
     }
   });

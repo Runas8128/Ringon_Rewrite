@@ -1,10 +1,11 @@
+import { setTimeout } from "timers/promises";
+
 import { GuildTextBasedChannel, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
 import { DB_Manager } from "../../database";
 import { classes } from "../../database/decklist";
-import { timer } from "../../../util/misc";
 
 export default {
   name: 'uploadDeck',
@@ -54,7 +55,10 @@ export default {
       filter: _i => _i.customId === `modal_${interaction.user.id}`,
     });
     
-    while (DB_Manager.loading.decklist) await timer(100);
+    while (DB_Manager.loading.decklist) {
+      await setTimeout(100);
+    }
+
     DB_Manager.decklist.upload({
       name: rst.fields.getTextInputValue('name'),
       desc: rst.fields.getTextInputValue('desc'),

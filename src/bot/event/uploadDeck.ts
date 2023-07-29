@@ -3,7 +3,7 @@ import { EmbedBuilder } from "@discordjs/builders";
 import { Event } from "./Event";
 import { DB_Manager } from "../database";
 import { classes } from "../database/decklist";
-import { timer } from "../../util/misc";
+import { setTimeout } from "timers/promises";
 
 class DeckUploader {
   origin: Message;
@@ -39,7 +39,7 @@ class DeckUploader {
       if (try_count == 0)
         await this.channel.send('DB를 로드하는 중입니다. 잠시만 기다려주세요...');
 
-      await timer(100);
+      await setTimeout(100);
       await this.upload(name, desc, try_count + 1);
     }
     else {

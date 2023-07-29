@@ -2,7 +2,6 @@ import { APIEmbedField, SlashCommandBuilder } from "discord.js";
 import { Command } from "../Command";
 import { DB_Manager } from "../../database";
 import StudiedView from "../../view/StudiedView";
-import { reply } from "../../../util/misc";
 
 export default {
   perm: 'member',
@@ -35,10 +34,12 @@ export default {
           inline: false,
         })),
     );
-    await reply(interaction, new StudiedView(
+
+    const view = new StudiedView(
       fields.length > 0 ?
         fields :
         [{ name: '엥 비어있네요', value: '왜지...', inline: true }],
-    ).get_updated_msg());
+    );
+    await interaction.reply(view.get_updated_msg());
   },
 } as Command;

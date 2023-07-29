@@ -2,7 +2,6 @@ import axios from "axios";
 import { ButtonStyle, SlashCommandBuilder } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
-import { reply } from "../../../util/misc";
 
 interface Portal {
   data: { hash: string, errors: any[] };
@@ -25,7 +24,7 @@ export default {
       `https://shadowverse-portal.com/api/v1/deck/import?format=json&deck_code=${deck_code}`)).data;
 
     if (result.data.errors.length > 0) {
-      await reply(interaction, '덱 코드가 무효하거나, 잘못 입력되었습니다. 다시 입력해 주시기 바랍니다.');
+      await interaction.reply('덱 코드가 무효하거나, 잘못 입력되었습니다. 다시 입력해 주세요!');
       return;
     }
 
@@ -36,6 +35,6 @@ export default {
           .setStyle(ButtonStyle.Link)
           .setURL(`https://shadowverse-portal.com/deck/${result.data.hash}?lang=ko`),
       );
-    await reply(interaction, { components: [row] });
+    await interaction.reply({ components: [row] });
   },
 } as Command;

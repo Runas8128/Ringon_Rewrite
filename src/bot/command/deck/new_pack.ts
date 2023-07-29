@@ -2,7 +2,6 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { EmbedBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { DB_Manager } from "../../database";
-import { reply } from "../../../util/misc";
 
 export default {
   perm: 'admin',
@@ -15,28 +14,28 @@ export default {
       .setRequired(true)),
   async execute(interaction) {
     if (!interaction.channel || !interaction.guild) {
-      await reply(interaction, "팩이름 명령어는 서버의 텍스트 채널에서 사용해주세요!");
+      await interaction.reply("팩이름 명령어는 서버의 텍스트 채널에서 사용해주세요!");
       return;
     }
 
-    await reply(interaction, {
-      embeds: [new EmbedBuilder()
-        .setTitle('⚠️ 해당 명령어 사용시, 현재 등록된 덱리가 모두 삭제됩니다.')
-        .setDescription('사용하시려면 `확인`을 입력해주세요! 1분 후 자동으로 취소됩니다.'),
-      ],
-    });
+    const embedWarn = new EmbedBuilder()
+      .setTitle('⚠️ 해당 명령어 사용시, 현재 등록된 덱리가 모두 삭제됩니다.')
+      .setDescription('사용하시려면 `확인`을 입력해주세요! 1분 후 자동으로 취소됩니다.');
+    await interaction.reply({ embeds: [ embedWarn ] });
 
-    if (!(await check(interaction))) {
-      await reply(interaction, { content: '팩 변경을 취소합니다.' });
+    const proceed = await check(interaction);
+    if (!proceed) {
+      interaction.editReply({ content: '팩 변경을 취소합니다.' });
       return;
     }
 
-    await interaction.followUp({
-      embeds: [new EmbedBuilder()
-        .setTitle('ℹ️ 승인되었습니다!')
-        .setDescription(`덱리 초기화 및 팩이름 변경을 진행합니다.\n예상 시간: ${DB_Manager.decklist.decklist.length / 10}초`),
-      ],
-    });
+    const embedGranted = new EmbedBuilder()
+      .setTitle('ℹ️ 승인되었습니다!')
+      .setDescription(
+        `덱리 초기화 및 팩이름 변경을 진행합니다.\n' +
+        '예상 시간: ${DB_Manager.decklist.decklist.length / 10}초`
+      );
+    await interaction.followUp({ embeds: [ embedGranted ] });
 
     const b = Date.now();
 
@@ -47,12 +46,10 @@ export default {
 
     const e = Date.now();
 
-    await interaction.followUp({
-      embeds: [new EmbedBuilder()
-        .setTitle('ℹ️ 팩 이름 변경에 성공했습니다!')
-        .setDescription(`소요 시간: ${(e - b) / 1000}초`),
-      ]
-    });
+    const embedDone = new EmbedBuilder()
+      .setTitle('ℹ️ 팩 이름 변경에 성공했습니다!')
+      .setDescription(`소요 시간: ${(e - b) / 1000}초`);
+    await interaction.followUp({ embeds: [ embedDone ] });
   },
 } as Command;
 

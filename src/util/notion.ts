@@ -1,7 +1,7 @@
 import { Client, UnknownHTTPResponseError } from '@notionhq/client';
 import { PageObjectResponse, PartialPageObjectResponse, QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { loggerGen } from './logger';
-import { timer } from './misc';
+import { setTimeout } from 'timers/promises';
 
 const logger = loggerGen.getLogger(__filename);
 
@@ -101,7 +101,7 @@ export class Database {
       logger.warn(
         `Unknown HTTP response error: code ${err.code}, retrying in 100ms`,
       );
-      await timer(100);
+      await setTimeout(100);
       this.push(...stuffs);
     }
   }
@@ -148,7 +148,7 @@ export class Database {
     catch (err) {
       if (!(err instanceof UnknownHTTPResponseError)) throw err;
       logger.warn(`Unknown HTTP response error: code ${err.code}, retrying in 100ms`);
-      await timer(100);
+      await setTimeout(100);
       await this.delete(page_id);
     }
   }
