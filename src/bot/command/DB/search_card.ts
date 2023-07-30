@@ -20,10 +20,7 @@ export default {
 
     const kws = interaction.options.getString('키워드', true).split(' ');
     let list: Card[] = JSON.parse(JSON.stringify(DB_Manager.cards.cards));
-
-    function kw_pred(card: Card) {
-      return kws.filter(word => card.name.includes(word)).length;
-    }
+    const kw_pred = (card: Card) => kws.filter(word => card.name.includes(word)).length;
 
     list = list.sort((c1, c2) => kw_pred(c2) - kw_pred(c1));
     const first_not_match_idx = list.findIndex(deck => kw_pred(deck) === 0);
