@@ -23,7 +23,7 @@ export class Bot {
       setup_message_command(this.client),
     ]);
 
-    this.client!.user?.setPresence({
+    this.client.user?.setPresence({
       status: isTesting ? 'dnd' : 'online',
       activities: isTesting ? [{ name: '버그 수정' }] : [],
     });
