@@ -17,12 +17,12 @@ function select_weight<T>(targets: Array<T>, weights: Array<number>): T {
   return targets[last_index];
 }
 
-interface FullDetectObj {
+export interface FullDetectObj {
   target: string;
   result: string;
 }
 
-interface ProbDetectObj {
+export interface ProbDetectObj {
   target: string;
   result: string;
   ratio: number;
