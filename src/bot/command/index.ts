@@ -2,9 +2,9 @@ import { Client, PermissionFlagsBits } from "discord.js";
 
 import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
-import { loggerGen } from "../../logger";
 import { isTesting } from "../../config/options/client_options";
 import { guild } from "../../config/options/discord";
+import { loggerGen } from "../../logger";
 
 const logger = loggerGen.getLogger(__filename);
 

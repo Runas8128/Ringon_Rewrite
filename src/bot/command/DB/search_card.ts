@@ -1,8 +1,9 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+
 import { Command } from "../Command";
+import CardView from "../../view/CardView";
 import { DB_Manager } from "../../../database";
 import { Card } from "../../../database/cards";
-import CardView from "../../view/CardView";
 
 export default {
   perm: 'member',

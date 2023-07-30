@@ -1,8 +1,9 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+
 import { Command } from "../Command";
+import DecklistView from "../../view/DecklistView";
 import { DB_Manager } from "../../../database";
 import { Deck, classes } from "../../../database/decklist";
-import DecklistView from "../../view/DecklistView";
 
 export default {
   perm: 'member',

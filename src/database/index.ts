@@ -5,6 +5,7 @@ import { Detect } from "./detect";
 import { loggerGen } from "../logger";
 
 const logger = loggerGen.getLogger(__filename);
+
 type dbName = 'detect' | 'decklist' | 'cards';
 
 class Manager {

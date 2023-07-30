@@ -1,4 +1,5 @@
 import path from 'path';
+
 import winston from 'winston';
 
 const { combine, timestamp, printf, colorize, label } = winston.format;

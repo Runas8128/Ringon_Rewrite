@@ -1,5 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { EmbedBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
+
 import { Command } from "../Command";
 import { DB_Manager } from "../../../database";
 

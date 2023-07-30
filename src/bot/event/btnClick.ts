@@ -1,5 +1,6 @@
 import { ButtonInteraction, Events, Interaction } from "discord.js";
 import { ButtonBuilder } from "@discordjs/builders";
+
 import { Event } from "./Event";
 
 type BtnCallback = (interaction: ButtonInteraction) => Promise<void>;

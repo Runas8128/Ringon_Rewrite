@@ -1,8 +1,9 @@
 import { ButtonStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "@discordjs/builders";
-import { Card } from "../../database/cards";
-import { eventHandler } from "../event/btnClick";
+
 import UpDownView from "./UpDownView";
+import { eventHandler } from "../event/btnClick";
+import { Card } from "../../database/cards";
 
 export default class extends UpDownView {
   cards: Card[];

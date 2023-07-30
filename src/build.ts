@@ -1,8 +1,10 @@
 import { readFileSync, readdirSync, writeFileSync, copyFileSync, mkdirSync, rmSync, existsSync } from "fs";
 import path, { join } from "path";
-import * as ReadLine from "readline/promises";
 import { stdin, stdout } from "process";
+import * as ReadLine from "readline/promises";
+
 import JSZip from "jszip";
+
 import { loggerGen } from "./logger";
 import { isTesting } from "./config/options/client_options";
 

@@ -1,8 +1,10 @@
-import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
-import { deck } from '../config/options/notion';
-import { channel } from '../config/options/discord';
-import { Database, Block, PropertyPayload } from '../notion';
 import { setTimeout } from 'timers/promises';
+
+import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
+
+import { channel } from '../config/options/discord';
+import { deck } from '../config/options/notion';
+import { Database, Block, PropertyPayload } from '../notion';
 
 export const classes : { [keys: string]: string } = {
   "엘프": "1004600679433777182",

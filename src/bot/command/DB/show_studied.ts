@@ -1,7 +1,9 @@
-import { APIEmbedField, SlashCommandBuilder } from "discord.js";
+import { APIEmbedField } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
 import StudiedView from "../../view/StudiedView";
+import { DB_Manager } from "../../../database";
 
 export default {
   perm: 'member',

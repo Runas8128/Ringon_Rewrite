@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ButtonStyle, SlashCommandBuilder } from "discord.js";
-import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
+import { ButtonStyle } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 
 interface Portal {

@@ -1,4 +1,5 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+
 import { Command } from "../Command";
 import { DB_Manager } from "../../../database";
 

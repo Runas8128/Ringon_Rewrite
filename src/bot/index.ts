@@ -2,8 +2,8 @@ import { Client } from 'discord.js';
 
 import { setup_event } from './event';
 import { setup_command } from './command';
-import { client_options, isTesting } from '../config/options/client_options';
 import { setup_message_command } from './command/message';
+import { client_options, isTesting } from '../config/options/client_options';
 
 export class Bot {
   static client: Client = new Client(client_options);

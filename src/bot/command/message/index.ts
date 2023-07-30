@@ -1,7 +1,8 @@
 import { ApplicationCommandType, Client } from "discord.js";
-import { loggerGen } from "../../../logger";
+
 import { mcList } from "./mcList";
 import { guild } from "../../../config/options/discord";
+import { loggerGen } from "../../../logger";
 
 const logger = loggerGen.getLogger(__filename);
 

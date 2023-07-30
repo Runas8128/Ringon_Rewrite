@@ -1,5 +1,5 @@
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "@discordjs/builders";
 import { ButtonInteraction } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "@discordjs/builders";
 
 type IndexModifier = (index: number) => number;
 

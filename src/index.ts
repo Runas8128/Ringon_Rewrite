@@ -1,5 +1,7 @@
 import path from "path";
+
 import { config } from "dotenv";
+
 import { select } from "./config/options/client_options";
 import { DB_Manager } from "./database";
 import { loggerGen } from "./logger";
