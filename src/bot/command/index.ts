@@ -1,4 +1,5 @@
 import { Client, PermissionFlagsBits } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
@@ -16,23 +17,21 @@ function preprocess() {
   return isTesting ? fullCmdList : fullCmdList.filter(c => c.perm !== 'dev');
 }
 
+async function deploy(client: Client, data: SlashCommandBuilder) {
+  try {
+    await client.application?.commands
+      .create(data.toJSON(), guild);
+    return true;
+  }
+  catch (r) {
+    logger.warn(`An error occured while loading ${data.name}: ${r}`);
+    return false;
+  }
+}
+
 async function deploy_commands(client: Client, commandList: Command[]) {
   logger.info('deploying commands');
-  
-  const result = await Promise.all(commandList.map(
-    ({ data }) => (async () => {
-      try {
-        await client.application?.commands
-          .create(data.toJSON(), guild);
-        return true;
-      }
-      catch (r) {
-        logger.warn(`An error occured while loading ${data.name}: ${r}`);
-        return false;
-      }
-    })()
-  ));
-
+  const result = await Promise.all(commandList.map(cmd => deploy(client, cmd.data)));
   logger.info(`successfully loaded ${result.filter(r => r).length} commands`);
 }
 
