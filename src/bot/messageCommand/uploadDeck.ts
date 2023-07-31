@@ -4,8 +4,8 @@ import { GuildTextBasedChannel, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
-import { DB_Manager } from "../../../database";
-import { classes } from "../../../database/decklist";
+import { DB_Manager } from "../../database";
+import { classes } from "../../database/decklist";
 
 export default {
   name: 'uploadDeck',
