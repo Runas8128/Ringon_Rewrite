@@ -42,6 +42,13 @@ export interface Contrib {
   ContribID: string;
 }
 
+interface DeckUpdatePayload {
+  id: number;
+  updater: string;
+  desc?: string;
+  image_url?: string;
+}
+
 export class DeckList {
   id_map: { [keys: string]: string };
 
@@ -108,13 +115,11 @@ export class DeckList {
     await this.list_db.delete(deck.page_id);
   }
 
-  async update_deck(guild: Guild, id: number, updater: string, desc?: string, image_url?: string) {
+  async update_deck({ id, updater, desc, image_url }: DeckUpdatePayload) {
     if (!desc && !image_url) return;
 
     const deck = this.decklist.find(_deck => _deck.deck_id === id);
     if (!deck) return;
-
-    const history_embed = this.make_deck_embed(deck, guild);
 
     if (desc) deck.desc = desc;
     if (image_url) deck.image_url = image_url;
@@ -135,8 +140,6 @@ export class DeckList {
       deck.page_id,
       ...propertify(deck),
     );
-
-    await this.history!.send({ embeds: [history_embed] });
   }
 
   make_deck_embed(deck: Deck, guild: Guild) {
