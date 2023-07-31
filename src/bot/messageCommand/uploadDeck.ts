@@ -1,6 +1,6 @@
 import { setTimeout } from "timers/promises";
 
-import { ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
+import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
@@ -10,7 +10,6 @@ import { classes } from "../../database/decklist";
 enum State {
   OK = 0,
   UPDATE,
-  RENAME,
   CANCEL,
 }
 
@@ -34,9 +33,8 @@ export default {
 
     if (code === State.OK) {
       if (!att0) {
-        await interaction.reply({
+        await rst.editReply({
           content: '⚠ 덱의 사진을 첨부한 메시지에서 실행해주세요!',
-          ephemeral: true,
         });
         return;
       }
@@ -49,13 +47,12 @@ export default {
         image_url: att0.url,
       });
     
-      await rst.reply({
+      await rst.editReply({
         content: '덱 등록을 성공적으로 마쳤습니다!',
         allowedMentions: { repliedUser: false },
       });
     }
     if (code === State.UPDATE) {
-      const name = rst.fields.getTextInputValue('name');
       const prev_deck = DB_Manager.decklist.decklist.find(d => d.name === name);
       if (!prev_deck) return;
   
@@ -69,17 +66,19 @@ export default {
         desc: desc,
         image_url: att0?.url
       });
-    }
-    if (code === State.RENAME) {
-      await this.execute(interaction);
+
+      await rst.editReply({
+        content: `${name}을 성공적으로 업데이트했습니다!`,
+        allowedMentions: { repliedUser: false }
+      })
     }
     if (code === State.CANCEL) {
-      return;
+      await rst.editReply("덱 등록을 취소합니다.");
     }
   },
 } as MessageCommand;
 
-async function getDeckInfo(interaction: CommandInteraction): Promise<[State, ModalSubmitInteraction]> {
+async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction): Promise<[State, ModalSubmitInteraction]> {
   const modal = new ModalBuilder()
     .setCustomId(`modal_${interaction.user.id}`)
     .setTitle('덱 추가')
@@ -106,7 +105,7 @@ async function getDeckInfo(interaction: CommandInteraction): Promise<[State, Mod
     time: 60000,
     filter: _i => _i.customId === `modal_${interaction.user.id}`,
   });
-  await rst.deferReply();
+  await rst.deferReply({ ephemeral: true });
 
   while (DB_Manager.loading.decklist) {
     await setTimeout(100);
@@ -142,8 +141,19 @@ async function getDeckInfo(interaction: CommandInteraction): Promise<[State, Mod
     componentType: ComponentType.Button,
     filter: i => i.customId.endsWith(ID) && i.user.id === interaction.user.id,
   });
+  await msg.delete();
+
   const [ _1, action, _2 ] = button.customId.split('_');
-  if (action === "Update") return [ State.UPDATE, rst ];
-  if (action === "Rename") return [ State.RENAME, rst ];
-  return [ State.CANCEL, rst ]; // default action
+  if (action === "Update") {
+    await button.deferUpdate();
+    return [ State.UPDATE, rst ];
+  }
+  if (action === "Cancel") {
+    await button.deferUpdate();
+    return [ State.CANCEL, rst ];
+  }
+
+  // default action : Rename
+  await rst.deleteReply();
+  return getDeckInfo(button);
 }
