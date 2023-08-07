@@ -25,7 +25,7 @@ export class Bot {
 
     this.client.user?.setPresence({
       status: isTesting ? 'dnd' : 'online',
-      activities: isTesting ? [{ name: '버그 수정' }] : [],
+      activities: isTesting ? [{ name: '버그 수정' }] : undefined,
     });
   }
 }
