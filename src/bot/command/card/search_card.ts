@@ -26,7 +26,7 @@ export default {
     const first_not_match_idx = list.findIndex(deck => kw_pred(deck) === 0);
     list.splice(first_not_match_idx);
 
-    await interaction.reply(new CardView(list).get_updated_msg());
+    await interaction.editReply(new CardView(list).get_updated_msg());
   },
   async autocompleter(interaction) {
     const focusdVar = interaction.options.getFocused(true);

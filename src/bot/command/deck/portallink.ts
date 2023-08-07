@@ -35,6 +35,6 @@ export default {
           .setStyle(ButtonStyle.Link)
           .setURL(`https://shadowverse-portal.com/deck/${result.data.hash}?lang=ko`),
       );
-    await interaction.reply({ components: [row] });
+    await interaction.editReply({ components: [row] });
   },
 } as Command;
