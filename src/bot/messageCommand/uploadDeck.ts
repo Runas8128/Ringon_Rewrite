@@ -26,6 +26,15 @@ export default {
     }
 
     const [code, rst] = await getDeckInfo(interaction);
+    if (!rst) {
+      const message = { content: '제한시간 15분을 초과했습니다. 다시 입력해주세요!', ephemeral: true };
+      try { 
+        await interaction.reply(message);
+      } catch (e) {
+        await interaction.followUp(message);
+      }
+      return;
+    }
 
     const name = rst.fields.getTextInputValue('name');
     const desc = rst.fields.getTextInputValue('desc');
@@ -78,7 +87,7 @@ export default {
   },
 } as MessageCommand;
 
-async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction): Promise<[State, ModalSubmitInteraction]> {
+async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction): Promise<[State, ModalSubmitInteraction | undefined]> {
   const modal = new ModalBuilder()
     .setCustomId(`modal_${interaction.user.id}`)
     .setTitle('덱 추가')
@@ -101,10 +110,16 @@ async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction):
         )
     );
   await interaction.showModal(modal);
-  const rst = await interaction.awaitModalSubmit({
-    time: 60000,
-    filter: _i => _i.customId === `modal_${interaction.user.id}`,
-  });
+
+  let rst: ModalSubmitInteraction;
+  try {
+    rst = await interaction.awaitModalSubmit({
+      time: 1000 * 60 * 15,
+      filter: _i => _i.customId === `modal_${interaction.user.id}`,
+    });
+  } catch(e) {
+    return [ State.CANCEL, undefined ];
+  }
   await rst.deferReply({ ephemeral: true });
 
   while (DB_Manager.loading.decklist) {
