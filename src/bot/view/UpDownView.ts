@@ -5,9 +5,11 @@ type IndexModifier = (index: number) => number;
 
 export default class {
   index: number;
+  length: number;
 
-  constructor() {
+  constructor(length: number) {
     this.index = 0;
+    this.length = length;
   }
 
   async update_message(interaction: ButtonInteraction, modify_index: IndexModifier) {
@@ -19,7 +21,8 @@ export default class {
   }
 
   check_range() {
-    if (this.index <= 0) this.index = 0;
+    if (this.index < 0) this.index = 0;
+    if (this.index >= this.length) this.index = this.length - 1;
   }
 
   build_embed() {

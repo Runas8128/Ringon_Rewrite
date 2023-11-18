@@ -16,7 +16,7 @@ export default class extends UpDownView {
   delete: ButtonBuilder;
 
   constructor(decks: Deck[], guild: Guild) {
-    super();
+    super(decks.length);
     this.decks = decks;
     this.guild = guild;
 

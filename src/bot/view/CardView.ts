@@ -12,7 +12,7 @@ export default class extends UpDownView {
   next: ButtonBuilder;
 
   constructor(cards: Card[]) {
-    super();
+    super(cards.length);
     this.cards = cards;
 
     this.prev = eventHandler
