@@ -1,22 +1,13 @@
 import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
+import { deckManager } from "../../../util/deckManager";
 
 export default {
   perm: 'admin',
   data: new SlashCommandBuilder()
     .setName('업데이트')
-    .setDescription('DB를 다시 로드합니다.')
-    .addStringOption(option => option
-      .setName('db')
-      .setDescription('업데이트할 DB를 선택해주세요.')
-      .setRequired(true)
-      .addChoices(
-        { name: '감지', value: 'detect' },
-        { name: '덱리', value: 'decklist' },
-        { name: '카드', value: 'cards' },
-      )),
+    .setDescription('DB를 다시 로드합니다.'),
   async execute(interaction) {
     await interaction.reply({
       embeds: [
@@ -27,9 +18,8 @@ export default {
     });
 
     const sync_start = Date.now();
-    const dbName = interaction.options.getString('db', true);
-    if (dbName === 'detect' || dbName === 'decklist' || dbName === 'cards')
-      await DB_Manager.load(dbName);
+    await deckManager.load(interaction.guild!);
+    // TODO: add more db loader
     const sync_end = Date.now();
     
     await interaction.editReply({

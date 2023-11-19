@@ -2,7 +2,8 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
+import { MongoDB } from "../../../util/mongodb";
+import { deckManager } from "../../../util/deckManager";
 
 export default {
   perm: 'admin',
@@ -34,16 +35,13 @@ export default {
       .setTitle('ℹ️ 승인되었습니다!')
       .setDescription(
         `덱리 초기화 및 팩이름 변경을 진행합니다.\n' +
-        '예상 시간: ${DB_Manager.decklist.decklist.length / 10}초`
+        '예상 시간: ${await MongoDB.deck.countDocuments() / 10}초`
       );
     await interaction.followUp({ embeds: [ embedGranted ] });
 
     const b = Date.now();
 
-    await DB_Manager.decklist.update_pack(
-      interaction.options.getString('이름', true),
-      interaction.guild,
-    );
+    await deckManager.update_pack(interaction.options.getString('이름', true), interaction.guild);
 
     const e = Date.now();
 

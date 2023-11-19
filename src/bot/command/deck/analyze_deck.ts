@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
+import { deckManager } from "../../../util/deckManager";
 
 export default {
   perm: 'member',
@@ -10,7 +10,7 @@ export default {
     .setDescription('덱을 분석해줍니다.'),
   async execute(interaction) {
     await interaction.reply({
-      embeds: [DB_Manager.decklist.analyze(interaction.client)],
+      embeds: [await deckManager.analyze(interaction.client)],
     });
   },
 } as Command;

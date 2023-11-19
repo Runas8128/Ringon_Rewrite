@@ -3,7 +3,7 @@ import path from "path";
 import { config } from "dotenv";
 
 import { select } from "./config/options/client_options";
-import { DB_Manager } from "./database";
+import { DB_Manager } from "./database_notion";
 import { loggerGen } from "./logger";
 import { loadNotion } from "./notion";
 import { app } from "./web";

@@ -2,8 +2,19 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import DecklistView from "../../view/DecklistView";
-import { DB_Manager } from "../../../database";
-import { Deck, classes } from "../../../database/decklist";
+import { MongoDB } from "../../../util/mongodb";
+import { Deck } from "../../../util/schema";
+
+export const classes : { [keys: string]: string } = {
+  "엘프": "1004600679433777182",
+  "로얄": "1004600684517261422",
+  "위치": "1004600687688163418",
+  "드래곤": "1004600677751848961",
+  "네크로맨서": "1004600681266675782",
+  "뱀파이어": "1004600685985271859",
+  "비숍": "1004600676053155860",
+  "네메시스": "1004600682902462465"
+};
 
 export default {
   perm: 'member',
@@ -32,7 +43,10 @@ export default {
     const kw_pred = (deck: Deck, kws: string[]) =>
       kws.filter(kw => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length;
 
-    let decks: Deck[] = JSON.parse(JSON.stringify(DB_Manager.decklist.decklist)); // Copy full decklist
+    let decks: Deck[] = (await MongoDB.deck.find({
+      author: author?.id,
+      clazz: clazz ?? undefined,
+    }).toArray());
 
     if (keyword) {
       const kws = keyword.split(' ');
@@ -40,9 +54,6 @@ export default {
       const first_not_match_idx = decks.findIndex(deck => kw_pred(deck, kws) === 0);
       decks.splice(first_not_match_idx);
     }
-
-    if (author) decks = decks.filter(deck => deck.author === author.id);
-    if (clazz) decks = decks.filter(deck => deck.clazz === clazz);
 
     const dlView = new DecklistView(decks, interaction.guild!);
     await interaction.reply(dlView.get_updated_msg());
@@ -52,10 +63,11 @@ export default {
     if (focusdVar.name !== '검색어') return;
 
     await interaction.respond(
-      DB_Manager.decklist.decklist
-        .filter(deck => deck.name.includes(focusdVar.value))
-        .slice(0, 25)
-        .map(deck => ({ name: deck.name, value: deck.name })),
+      await MongoDB.deck
+        .find({ name: { $regex: focusdVar.value } })
+        .limit(25)
+        .map(deck => ({ name: deck.name, value: deck.name }))
+        .toArray(),
     );
   },
 } as Command;

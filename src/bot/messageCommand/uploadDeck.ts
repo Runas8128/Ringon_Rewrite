@@ -1,11 +1,24 @@
+// FIXME: This whole file i will sleep first now
+
 import { setTimeout } from "timers/promises";
 
 import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
-import { DB_Manager } from "../../database";
-import { classes } from "../../database/decklist";
+import { deckManager } from "../../util/deckManager";
+import { MongoDB } from "../../util/mongodb";
+
+export const classes : { [keys: string]: string } = {
+  "엘프": "1004600679433777182",
+  "로얄": "1004600684517261422",
+  "위치": "1004600687688163418",
+  "드래곤": "1004600677751848961",
+  "네크로맨서": "1004600681266675782",
+  "뱀파이어": "1004600685985271859",
+  "비숍": "1004600676053155860",
+  "네메시스": "1004600682902462465"
+};
 
 enum State {
   OK = 0,
@@ -48,7 +61,7 @@ export default {
         return;
       }
 
-      await DB_Manager.decklist.upload({
+      await deckManager.upload({
         name,
         desc,
         clazz: iCh.name,
@@ -62,15 +75,15 @@ export default {
       });
     }
     if (code === State.UPDATE) {
-      const prev_deck = DB_Manager.decklist.decklist.find(d => d.name === name);
+      const prev_deck = await MongoDB.deck.findOne({ name });
       if (!prev_deck) return;
   
-      const history_embed = DB_Manager.decklist.make_deck_embed(prev_deck, interaction.guild!);
-      DB_Manager.decklist.load_history(interaction.guild!);
-      DB_Manager.decklist.history!.send({ embeds: [ history_embed ] });
+      const history_embed = deckManager.make_deck_embed(prev_deck, interaction.guild!);
+      deckManager.load(interaction.guild!);
+      deckManager.history!.send({ embeds: [ history_embed ] });
   
-      await DB_Manager.decklist.update_deck({
-        id: prev_deck.deck_id,
+      await deckManager.update_deck({
+        name: prev_deck.name,
         updater: interaction.user.id,
         desc: desc,
         image_url: att0?.url
@@ -122,13 +135,8 @@ async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction):
   }
   await rst.deferReply({ ephemeral: true });
 
-  while (DB_Manager.loading.decklist) {
-    await setTimeout(100);
-  }
-
   const name = rst.fields.getTextInputValue('name');
-  if (!DB_Manager.decklist.decklist.find(d => d.name === name))
-    return [ State.OK, rst ];
+  if (!MongoDB.deck.findOne({ name })) return [ State.OK, rst ];
 
   const ID = Math.random().toString(36).substring(4);
   const row = new ActionRowBuilder<ButtonBuilder>()
