@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import { deckManager } from "../../../util/deckManager";
+import { loadCardDB } from "../../../util/misc";
 
 export default {
   perm: 'admin',
@@ -19,6 +20,7 @@ export default {
 
     const sync_start = Date.now();
     await deckManager.load(interaction.guild!);
+    await loadCardDB();
     // TODO: add more db loader
     const sync_end = Date.now();
     

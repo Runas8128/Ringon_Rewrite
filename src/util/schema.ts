@@ -36,4 +36,16 @@ export interface Card {
   evo_atk: number;
   evo_life: number;
   evo_desc: string;
+}export interface card_payload {
+  card_id: number;
+  card_name: string;
+  cost: number;
+  char_type: number;
+  atk: number;
+  life: number;
+  skill_disc: string;
+  evo_atk: number;
+  evo_life: number;
+  evo_skill_disc: string;
 }
+
