@@ -6,6 +6,7 @@ import { eventHandler } from "../event/btnClick";
 import { Deck } from "../../util/schema";
 import { channel } from "../../config/options/discord";
 import { MongoDB } from "../../util/mongodb";
+import { deckManager } from "../../util/deckManager";
 
 export const classes : { [keys: string]: string } = {
   "엘프": "1004600679433777182",
@@ -100,7 +101,7 @@ export default class extends UpDownView {
 
     const history = interaction.guild!.channels.cache
       .find(ch => ch.id === channel.history) as TextChannel;
-    await history.send({ embeds: [make_deck_embed(this.decks[this.index], interaction.guild!)] });
+    await history.send({ embeds: [deckManager.make_deck_embed(this.decks[this.index], interaction.guild!)] });
     await MongoDB.deck.deleteOne({ name: { $eq: this.decks[this.index].name } });
     this.decks.splice(this.index, 1);
     await this.update_message(interaction, index => index + 1);
@@ -110,7 +111,7 @@ export default class extends UpDownView {
     if (this.decks.length === 0)
       return new EmbedBuilder()
         .setTitle('❌ 검색 결과가 없습니다.');
-    return make_deck_embed(this.decks[this.index], this.guild);
+    return deckManager.make_deck_embed(this.decks[this.index], this.guild);
   }
 
   build_actionrow() {
@@ -132,49 +133,4 @@ export default class extends UpDownView {
       this.next.setDisabled(this.index === this.decks.length - 1);
     }
   }
-}
-
-// TODO: move this to util.ts
-function make_deck_embed(deck: Deck, guild: Guild) {
-  const deck_info = new EmbedBuilder()
-    .setTitle(deck.name)
-    .addFields(
-      { name: '클래스', value: deck.clazz },
-      { name: '등록일', value: deck.timestamp },
-    );
-
-  const member_cache = guild.members.cache;
-  const author = member_cache.find(member => member.id === deck.author);
-  if (author) {
-    deck_info.setAuthor({
-      name: author.displayName,
-      iconURL: author.displayAvatarURL(),
-    });
-  }
-  else {
-    deck_info.setAuthor({
-      name: '정보 없음',
-    });
-  }
-
-  if (deck.version > 1) {
-    deck_info.addFields({ name: '업데이트 횟수', value: deck.version.toString() });
-    const contribs = deck.contributors;
-    if (contribs.length > 0) {
-      deck_info.addFields({
-        name: '기여자 목록',
-        value: contribs.map(cid => member_cache.find(m => m.id === cid) ?? '(정보 없음)').join(', '),
-      });
-    }
-  }
-
-  if (deck.desc.length > 0) {
-    deck_info.addFields({ name: '덱 설명', value: deck.desc, inline: false });
-    const hashtags = deck.desc.match(/#(\w+)/g);
-    if (hashtags)
-      deck_info.addFields({ name: '해시태그', value: hashtags.join(', ') });
-  }
-
-  deck_info.setImage(deck.image_url);
-  return deck_info;
 }
