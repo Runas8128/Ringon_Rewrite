@@ -1,0 +1,1 @@
+export { deckManager } from "./deckManager";

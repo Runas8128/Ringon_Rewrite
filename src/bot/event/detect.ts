@@ -1,8 +1,7 @@
 import { Events, Message } from "discord.js";
 
 import { Event } from "./Event";
-import { MongoDB } from "../../util/mongodb";
-import { select_weight } from "../../util/misc";
+import { detectManager } from "../../util/detectManager";
 
 export default {
   name: Events.MessageCreate,
@@ -10,10 +9,7 @@ export default {
   async execute({ author, content, channel }: Message) {
     if (author.bot) return;
 
-    const a = await MongoDB.full.findOne({ target: { $eq: content } });
-    if (a) return await channel.send(a.result);
-
-    const b = await MongoDB.prob.find({ target: { $eq: content } }).toArray();
-    if (b) return await channel.send(select_weight(b.map(r => r.result), b.map(r => r.ratio)));
+    const rst = await detectManager.detect(content);
+    if (rst) await channel.send(rst);
   },
 } as Event;

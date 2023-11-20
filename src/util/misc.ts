@@ -3,6 +3,11 @@ import axios from "axios";
 import { MongoDB } from "./mongodb";
 import { card_payload, Card } from "./schema";
 
+export const cut = (str: string, len: number) =>
+  str.length > len ?
+    str.substring(0, len - 3) + '...' :
+    str;
+
 export function select_weight<T>(targets: Array<T>, weights: Array<number>): T {
   const total_weight = weights.reduce((prev, curr) => prev + curr, 0);
   const weighted_random = Math.random() * total_weight;
