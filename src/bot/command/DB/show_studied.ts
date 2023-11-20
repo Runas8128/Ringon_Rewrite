@@ -6,7 +6,6 @@ import StudiedView from "../../view/StudiedView";
 import { MongoDB } from "../../../util/mongodb";
 import { FullDetectObj } from "../../../util/schema";
 
-// TODO: move all these functions to util
 const cut = (str: string, len: number) =>
   str.length > len ?
     str.substring(0, len - 3) + '...' :
