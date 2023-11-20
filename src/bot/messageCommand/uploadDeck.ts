@@ -1,7 +1,3 @@
-// FIXME: This whole file i will sleep first now
-
-import { setTimeout } from "timers/promises";
-
 import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
