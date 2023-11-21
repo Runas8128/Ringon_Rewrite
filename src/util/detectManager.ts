@@ -1,5 +1,4 @@
 import { APIEmbedField } from "discord.js";
-import { cut, select_weight } from "./misc";
 import { MongoDB } from "./mongodb";
 import { FullDetectObj, ProbDetectObj } from "./schema";
 
@@ -22,7 +21,20 @@ export class detectManager {
     if (a) return a.result;
 
     const b = this.prob.filter(o => o.target === content);
-    if (b) return select_weight(b.map(r => r.result), b.map(r => r.ratio));
+    if (b) {
+      const targets = b.map(r => r.result), weights = b.map(r => r.ratio);
+      const total_weight = weights.reduce((prev, curr) => prev + curr, 0);
+      const weighted_random = Math.random() * total_weight;
+      const last_index = targets.length - 1;
+      let current_weight = 0;
+    
+      for (let i = 0; i < last_index; ++i) {
+        current_weight += weights[i];
+        if (weighted_random < current_weight) return targets[i];
+      }
+    
+      return targets[last_index];
+    }
   }
 
   static async getCount() {
@@ -43,7 +55,9 @@ export class detectManager {
   static fullParse(obj: FullDetectObj) {
     return {
       name: obj.target,
-      value: cut(obj.result, 50),
+      value: obj.result.length > 50 ?
+        obj.result.substring(0, 47) + '...' :
+        obj.result,
       inline: true,
     } as APIEmbedField;
   }
