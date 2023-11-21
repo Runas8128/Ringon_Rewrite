@@ -33,10 +33,10 @@ export default {
     const kw_pred = (deck: Deck, kws: string[]) =>
       kws.filter(kw => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length;
 
-    let decks: Deck[] = (await MongoDB.deck.find({
+    let decks: Deck[] = await MongoDB.deck.find({
       author: author?.id,
       clazz: clazz ?? undefined,
-    }).toArray());
+    }).toArray();
 
     if (keyword) {
       const kws = keyword.split(' ');
