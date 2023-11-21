@@ -15,7 +15,7 @@ export const classes : { [keys: string]: string } = {
   "네메시스": "1004600682902462465"
 };
 
-export interface DeckPayload {
+interface DeckPayload {
   name: string;
   clazz: string;
   desc?: string;
