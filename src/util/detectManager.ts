@@ -25,6 +25,10 @@ export class detectManager {
     if (b) return select_weight(b.map(r => r.result), b.map(r => r.ratio));
   }
 
+  static async getCount() {
+    return this.full.length + new Set(this.prob.map(o => o.target)).size;
+  }
+
   static async getFields() {
     await this.load();
     const fields: APIEmbedField[] =
