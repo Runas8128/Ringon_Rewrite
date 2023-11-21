@@ -2,7 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import { deckManager } from "../../../util/deckManager";
-import { loadCardDB } from "../../../util/misc";
+import { cardManager } from "../../../util/cardManager";
 import { detectManager } from "../../../util/detectManager";
 
 export default {
@@ -22,7 +22,7 @@ export default {
     const sync_start = Date.now();
     await deckManager.load(interaction.guild!);
     await detectManager.load();
-    await loadCardDB();
+    await cardManager.updateDB();
     const sync_end = Date.now();
     
     await interaction.editReply({

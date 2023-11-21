@@ -2,8 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import CardView from "../../view/CardView";
-import { MongoDB } from "../../../util/mongodb";
-import { Card } from "../../../util/schema";
+import { cardManager } from "../../../util/cardManager";
 
 export default {
   perm: 'member',
@@ -19,25 +18,16 @@ export default {
     await interaction.deferReply();
 
     const kws = interaction.options.getString('키워드', true).split(' ');
-    let list: Card[] = await MongoDB.cards.find().toArray();
-    const kw_pred = (card: Card) => kws.filter(word => card.name.includes(word)).length;
-
-    list = list.sort((c1, c2) => kw_pred(c2) - kw_pred(c1));
-    const first_not_match_idx = list.findIndex(deck => kw_pred(deck) === 0);
-    list.splice(first_not_match_idx);
-
-    await interaction.editReply(new CardView(list).get_updated_msg());
+    const view = new CardView(await cardManager.getMatch(kws));
+    await interaction.editReply(view.get_updated_msg());
   },
   async autocompleter(interaction) {
     const focusdVar = interaction.options.getFocused(true);
     if (focusdVar.name != '키워드') return;
-    
-    const result = await MongoDB.cards.find({ name: { $regex: focusdVar.value } })
-      .limit(25)
-      .toArray();
 
-    if (result.length > 0) await interaction.respond(
-      result.map(card => ({ name: card.name, value: card.name }))
+    const suggestList = await cardManager.getSuggest(focusdVar.value);
+    if (suggestList.length > 0) await interaction.respond(
+      suggestList.map(card => ({ name: card.name, value: card.name }))
     );
   },
 } as Command;

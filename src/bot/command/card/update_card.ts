@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { loadCardDB } from "../../../util/misc";
+import { cardManager } from "../../../util/cardManager";
 
 export default {
   perm: 'admin',
@@ -11,7 +11,7 @@ export default {
   async execute(interaction) {
     await interaction.reply('🔄 카드 DB를 업데이트하는 중입니다.');
 
-    await loadCardDB();
+    await cardManager.updateDB();
 
     try {
       await interaction.editReply('카드 DB 업데이트가 끝났습니다!')
