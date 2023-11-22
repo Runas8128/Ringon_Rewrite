@@ -41,7 +41,8 @@ export default {
 
     const b = Date.now();
 
-    await deckManager.update_pack(interaction.options.getString('이름', true), interaction.guild);
+    const pack_name = interaction.options.getString('이름', true);
+    await deckManager.update_pack(pack_name, interaction.guild);
 
     const e = Date.now();
 
