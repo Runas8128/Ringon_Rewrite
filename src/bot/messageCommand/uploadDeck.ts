@@ -55,6 +55,9 @@ export default {
         author: interaction.user.id,
         image_url: att0.url,
       });
+
+      const uploaded = DB_Manager.decklist.decklist.find(d => d.name === name);
+      await iCh.send({ embeds: [ DB_Manager.decklist.make_deck_embed(uploaded!, interaction.guild!) ] });
     
       await rst.editReply({
         content: '덱 등록을 성공적으로 마쳤습니다!',
@@ -75,6 +78,9 @@ export default {
         desc: desc,
         image_url: att0?.url
       });
+
+      const uploaded = DB_Manager.decklist.decklist.find(d => d.name === name);
+      await iCh.send({ embeds: [ DB_Manager.decklist.make_deck_embed(uploaded!, interaction.guild!) ] });
 
       await rst.editReply({
         content: `${name}을 성공적으로 업데이트했습니다!`,
