@@ -1,18 +1,6 @@
 import axios from 'axios';
-
-export interface Card {
-  page_id?: string;
-  card_id: number;
-  name: string;
-  cost: number;
-  type: string;
-  atk: number;
-  life: number;
-  desc: string;
-  evo_atk: number;
-  evo_life: number;
-  evo_desc: string;
-}
+import { MongoDB } from './mongoDB';
+import { Card } from './schema';
 
 interface card_payload {
   card_id: number;
@@ -35,20 +23,29 @@ const char_map : { [keys: number]: string } = {
 };
 
 export class Cards {
-  cards: Card[];
-
-  constructor() {
-    this.cards = [];
+  static async get_count() {
+    return await MongoDB.colCard.countDocuments();
   }
 
-  async load() {
+  static async search_card(keyword: string) {
+    const _rst = await MongoDB.colCard
+      .find({ $or: keyword.split(' ').map(k => ({ name: { $regex: k } })) })
+      .map(giveScore(keyword))
+      .toArray();
+    return _rst.sort((l, r) => r.score - l.score);
+  }
+
+  static async update() {
     const resp = await axios.get('https://shadowverse-portal.com/api/v1/cards?format=json&lang=ko');
     const payloads: card_payload[] = resp.data.data.cards;
 
-    this.cards = payloads
+    const cards = payloads
       .filter(card => card.card_name)
       .map(parse_payload)
       .sort((card1, card2) => card1.card_id - card2.card_id);
+    
+    await MongoDB.colCard.drop();
+    await MongoDB.colCard.insertMany(cards);
   }
 }
 
@@ -62,3 +59,12 @@ const parse_payload = ({
   atk, life, desc: skill_disc,
   evo_atk, evo_life, evo_desc: evo_skill_disc,
 } as Card);
+
+function giveScore(kw?: string) {
+  const kws = kw?.split(' ');
+  const kw_filter = kws ?
+    (card: Card) => kws.filter(kw => card.name.includes(kw)).length :
+    (_0: Card) => 1;
+
+  return (c: Card) => Object.assign(c, { score: kw_filter(c) });
+}

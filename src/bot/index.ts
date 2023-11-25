@@ -4,6 +4,8 @@ import { setup_event } from './event';
 import { setup_command } from './command';
 import { setup_message_command } from './messageCommand';
 import { client_options, isTesting } from '../config/options/client_options';
+import { DeckList } from '../database';
+import { guild } from '../config/options/discord';
 
 export class Bot {
   static client: Client = new Client(client_options);
@@ -22,6 +24,8 @@ export class Bot {
       setup_command(this.client),
       setup_message_command(this.client),
     ]);
+
+    DeckList.setGuild(await this.client.guilds.fetch(guild));
 
     this.client.user?.setPresence({
       status: isTesting ? 'dnd' : 'online',

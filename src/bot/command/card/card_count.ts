@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
+import { Cards } from "../../../database/cards";
 
 export default {
   perm: 'member',
@@ -9,6 +9,6 @@ export default {
     .setName('카드갯수')
     .setDescription('로드된 카드 갯수를 알려줍니다.'),
   async execute(interaction) {
-    await interaction.reply(`현재 로드된 카드는 총 ${DB_Manager.cards.cards.length}개입니다.`);
+    await interaction.reply(`현재 로드된 카드는 총 ${Cards.get_count()}개입니다.`);
   },
 } as Command;

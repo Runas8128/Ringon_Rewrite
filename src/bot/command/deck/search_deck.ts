@@ -2,8 +2,8 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import DecklistView from "../../view/DecklistView";
-import { DB_Manager } from "../../../database";
-import { Deck, classes } from "../../../database/decklist";
+import { DeckList } from "../../../database";
+import { classes } from "../../../database/decklist";
 
 export default {
   perm: 'member',
@@ -25,24 +25,11 @@ export default {
           .map(clazz => ({ name: clazz, value: clazz })),
       )),
   async execute(interaction) {
-    const keyword = interaction.options.getString('검색어');
-    const author = interaction.options.getUser('제작자');
-    const clazz = interaction.options.getString('클래스');
-
-    const kw_pred = (deck: Deck, kws: string[]) =>
-      kws.filter(kw => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length;
-
-    let decks: Deck[] = JSON.parse(JSON.stringify(DB_Manager.decklist.decklist)); // Copy full decklist
-
-    if (keyword) {
-      const kws = keyword.split(' ');
-      decks = decks.sort((d1, d2) => kw_pred(d2, kws) - kw_pred(d1, kws));
-      const first_not_match_idx = decks.findIndex(deck => kw_pred(deck, kws) === 0);
-      decks.splice(first_not_match_idx);
-    }
-
-    if (author) decks = decks.filter(deck => deck.author === author.id);
-    if (clazz) decks = decks.filter(deck => deck.clazz === clazz);
+    const decks = await DeckList.search_deck({
+      keyword: interaction.options.getString('검색어') ?? undefined,
+      author: interaction.options.getUser('제작자')?.id,
+      clazz: interaction.options.getString('클래스') ?? undefined,
+    });
 
     const dlView = new DecklistView(decks, interaction.guild!);
     await interaction.reply(dlView.get_updated_msg());
@@ -51,10 +38,9 @@ export default {
     const focusdVar = interaction.options.getFocused(true);
     if (focusdVar.name !== '검색어') return;
 
+    const rst = await DeckList.search_deck({ keyword: focusdVar.value });
     await interaction.respond(
-      DB_Manager.decklist.decklist
-        .filter(deck => deck.name.includes(focusdVar.value))
-        .slice(0, 25)
+      rst.slice(0, 25)
         .map(deck => ({ name: deck.name, value: deck.name })),
     );
   },

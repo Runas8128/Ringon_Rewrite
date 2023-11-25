@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
-import { DB_Manager } from "../../../database";
+import { DeckList } from "../../../database";
 
 export default {
   perm: 'admin',
@@ -32,18 +32,13 @@ export default {
 
     const embedGranted = new EmbedBuilder()
       .setTitle('ℹ️ 승인되었습니다!')
-      .setDescription(
-        `덱리 초기화 및 팩이름 변경을 진행합니다.\n' +
-        '예상 시간: ${DB_Manager.decklist.decklist.length / 10}초`
-      );
+      .setDescription("덱리 초기화 및 팩이름 변경을 진행합니다.");
     await interaction.followUp({ embeds: [ embedGranted ] });
 
     const b = Date.now();
 
-    await DB_Manager.decklist.update_pack(
-      interaction.options.getString('이름', true),
-      interaction.guild,
-    );
+    const newPackName = interaction.options.getString('이름', true);
+    await DeckList.update_pack(newPackName);
 
     const e = Date.now();
 

@@ -3,8 +3,9 @@ import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder 
 
 import UpDownView from "./UpDownView";
 import { eventHandler } from "../event/btnClick";
-import { DB_Manager } from "../../database";
-import { Deck, classes } from "../../database/decklist";
+import { DeckList } from "../../database";
+import { classes } from "../../database/decklist";
+import { Deck } from '../../database/schema';
 
 export default class extends UpDownView {
   decks: Deck[];
@@ -85,7 +86,7 @@ export default class extends UpDownView {
 
   async _delete(interaction: ButtonInteraction) {
     await interaction.deferUpdate();
-    await DB_Manager.decklist._delete_deck(this.decks[this.index], interaction.guild!);
+    await DeckList.delete_deck(this.decks[this.index].name);
     this.decks.splice(this.index, 1);
     await this.update_message(interaction, index => index + 1);
   }
@@ -94,7 +95,7 @@ export default class extends UpDownView {
     if (this.decks.length === 0)
       return new EmbedBuilder()
         .setTitle('❌ 검색 결과가 없습니다.');
-    return DB_Manager.decklist.make_deck_embed(this.decks[this.index], this.guild);
+    return DeckList.make_deck_embed(this.decks[this.index]);
   }
 
   build_actionrow() {

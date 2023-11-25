@@ -3,7 +3,7 @@ import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "@discordjs/builde
 
 import UpDownView from "./UpDownView";
 import { eventHandler } from "../event/btnClick";
-import { Card } from "../../database/cards";
+import { Card } from '../../database/schema';
 
 export default class extends UpDownView {
   cards: Card[];

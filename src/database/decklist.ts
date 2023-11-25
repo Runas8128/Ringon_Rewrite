@@ -1,10 +1,9 @@
-import { setTimeout } from 'timers/promises';
-
 import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
 
 import { channel } from '../config/options/discord';
-import { deck } from '../config/options/notion';
-import { Database, Block, PropertyPayload } from '../notion';
+import { Deck } from './schema';
+import { MongoDB } from './mongoDB';
+import { Document } from 'mongodb';
 
 export const classes : { [keys: string]: string } = {
   "엘프": "1004600679433777182",
@@ -17,7 +16,7 @@ export const classes : { [keys: string]: string } = {
   "네메시스": "1004600682902462465"
 };
 
-export interface DeckPayload {
+interface DeckPayload {
   name: string;
   clazz: string;
   desc?: string;
@@ -25,70 +24,38 @@ export interface DeckPayload {
   image_url: string;
 }
 
-export interface Deck {
-  page_id: string;
-  deck_id: number;
-  name: string;
-  clazz: string;
-  desc: string;
-  author: string;
-  image_url: string;
-  timestamp: string;
-  version: number;
-}
-
-export interface Contrib {
-  DeckID: number;
-  ContribID: string;
-}
-
 interface DeckUpdatePayload {
-  id: number;
+  name: string;
   updater: string;
   desc?: string;
   image_url?: string;
 }
 
+interface searchPayload {
+  keyword?: string;
+  author?: string;
+  clazz?: string;
+}
+
 export class DeckList {
-  id_map: { [keys: string]: string };
+  private static __guild?: Guild;
 
-  list_db: Database;
-  contrib_db: Database;
-  pack_block: Block;
-
-  decklist: Deck[];
-  contrib: Contrib[];
-
-  history?: TextChannel;
-
-  constructor() {
-    this.id_map = deck;
-
-    this.list_db = new Database(this.id_map.list);
-    this.contrib_db = new Database(this.id_map.contrib);
-    this.pack_block = new Block(this.id_map.pack);
-
-    this.decklist = [];
-    this.contrib = [];
-
-    this.history = undefined;
+  static setGuild(guild: Guild) {
+    if (!this.__guild) this.__guild = guild;
   }
 
-  load_history(guild: Guild) {
-    if (this.history) return;
-    
-    this.history = guild.channels.cache
-      .find(ch => ch.id === channel.history) as TextChannel;
+  static get history() {
+    return this.__guild?.channels.cache.find(ch => ch.id === channel.history) as TextChannel;
   }
 
-  analyze(client: Client) {
-    const total_count = this.decklist.length;
+  static async analyze(client: Client) {
+    const total_count = await MongoDB.colDeck.countDocuments();
     const embed = new EmbedBuilder()
       .setTitle(`총 ${total_count}개 덱 분석 결과`);
 
-    Object.keys(classes).forEach(clazz => {
-      const count = this.decklist.filter(deck => deck.clazz === clazz).length;
-      if (count === 0) return;
+    for (const clazz of Object.keys(classes)) {
+      const count = (await MongoDB.colDeck.find({ clazz: { $eq: clazz } }).toArray()).length;
+      if (count === 0) continue;
 
       const class_emoji = client.emojis.cache.find(emoji => emoji.id === classes[clazz]);
       embed.addFields({
@@ -96,53 +63,74 @@ export class DeckList {
         value: `${count}개 (점유율: ${(count / total_count * 100).toPrecision(4)}%)`,
         inline: true,
       });
-    });
+    }
 
     return embed;
   }
 
-  async update_pack(new_pack: string, guild: Guild) {
-    for (const deck of this.decklist) {
-      await this._delete_deck(deck, guild);
-      await setTimeout(100);
-    }
-    await this.pack_block.update(new_pack);
-  }
-
-  async _delete_deck(deck: Deck, guild: Guild) {
-    this.load_history(guild);
-    await this.history?.send({ embeds: [this.make_deck_embed(deck, guild)] });
-    await this.list_db.delete(deck.page_id);
-  }
-
-  async update_deck({ id, updater, desc, image_url }: DeckUpdatePayload) {
-    if (!desc && !image_url) return;
-
-    const deck = this.decklist.find(_deck => _deck.deck_id === id);
+  static async delete_deck(name: string) {
+    const deck = await MongoDB.colDeck.findOne({ name });
     if (!deck) return;
 
-    if (desc) deck.desc = desc;
-    if (image_url) deck.image_url = image_url;
-    deck.version += 1;
+    await this.history.send({ embeds: [this.make_deck_embed(deck)] });
+    await MongoDB.colDeck.deleteOne({ name });
+  }
 
-    if (
-      updater != deck.author &&
-      !(this.contrib.some(obj => obj.DeckID === deck.deck_id && obj.ContribID === updater))
-    ) {
-      this.contrib.push({ DeckID: deck.deck_id, ContribID: updater });
-      await this.contrib_db.push(
-        { name: 'DeckID', value: deck.deck_id, type: 'title' },
-        { name: 'ContribID', value: updater, type: 'rich_text' },
-      );
-    }
+  // find one deck with exact name
+  static async find_deck(name: string) {
+    return await MongoDB.colDeck.findOne({ name });
+  }
 
-    await this.list_db.update(
-      deck.page_id,
-      ...propertify(deck),
+  // search some decks with keyword, author and class info
+  static async search_deck({ keyword, author, clazz }: searchPayload) {
+    const _rst = await MongoDB.colDeck
+      .find({
+        author, clazz,
+        $or: keyword?.split(' ').map(k => ({ name: { $regex: k } }))
+      })
+      .map(giveScore(keyword))
+      .toArray();
+
+    return _rst.sort((l, r) => r.score - l.score);
+  }
+
+  static async upload_deck(deckPayload: DeckPayload) {
+    const deck = deckPayload as Deck;
+    deck.version = 1;
+    deck.timestamp = new Date()
+      .toISOString()
+      .split('T')[0]
+      .replaceAll('-', '/');
+
+    await MongoDB.colDeck.insertOne(deck);
+    return deck;
+  }
+
+  static async update_deck({ name, updater, desc, image_url }: DeckUpdatePayload) {
+    if (!desc && !image_url) return null;
+
+    await MongoDB.colDeck.findOneAndUpdate(
+      { name: { $eq: name } },
+      {
+        $set: { desc, image_url, },
+        $inc: { version: 1, },
+        $addToSet: { contributors: updater }
+      }
+    );
+    return this.find_deck(name);
+  }
+
+  static async update_pack(new_pack: string) {
+    for await (const deck of MongoDB.colDeck.find())
+      await this.history.send({ embeds: [this.make_deck_embed(deck)] });
+
+    await MongoDB.colPack.updateOne(
+      { key: 'pack_name' },
+      { $set: { value: new_pack } }
     );
   }
 
-  make_deck_embed(deck: Deck, guild: Guild) {
+  static make_deck_embed(deck: Deck) {
     const deck_info = new EmbedBuilder()
       .setTitle(deck.name)
       .addFields(
@@ -150,84 +138,44 @@ export class DeckList {
         { name: '등록일', value: deck.timestamp },
       );
 
-    const member_cache = guild.members.cache;
+    const member_cache = this.__guild!.members.cache;
     const author = member_cache.find(member => member.id === deck.author);
-    if (author) {
-      deck_info.setAuthor({
+    deck_info.setAuthor(
+      author ? {
         name: author.displayName,
         iconURL: author.displayAvatarURL(),
-      });
-    }
-    else {
-      deck_info.setAuthor({
+      } : {
         name: '정보 없음',
-      });
-    }
+      }
+    );
 
     if (deck.version > 1) {
       deck_info.addFields({ name: '업데이트 횟수', value: deck.version.toString() });
-      const contribs = this.contrib.filter(obj => obj.DeckID === deck.deck_id);
-      if (contribs.length > 0) {
+      if (deck.contributors.length > 0) {
         deck_info.addFields({
           name: '기여자 목록',
-          value: contribs.map(obj => member_cache.find(m => m.id === obj.ContribID) ?? '(정보 없음)').join(', '),
+          value: deck.contributors.map(cid => member_cache.find(m => m.id === cid)?.toString() ?? '(정보 없음)').join(', '),
         });
       }
     }
 
     if (deck.desc.length > 0) {
       deck_info.addFields({ name: '덱 설명', value: deck.desc, inline: false });
+
       const hashtags = deck.desc.match(/#(\w+)/g);
-      if (hashtags)
-        deck_info.addFields({ name: '해시태그', value: hashtags.join(', ') });
+      if (hashtags) deck_info.addFields({ name: '해시태그', value: hashtags.join(', ') });
     }
 
     deck_info.setImage(deck.image_url);
-    deck_info.setFooter({ text: `ID: ${deck.deck_id}` });
     return deck_info;
-  }
-
-  async load() {
-    this.decklist = (await this.list_db.load(
-      { name: 'page_id', type: 'page_id' },
-      { name: 'deck_id', type: 'number' },
-      { name: 'name', type: 'title' },
-      { name: 'clazz', type: 'select' },
-      { name: 'desc', type: 'rich_text' },
-      { name: 'author', type: 'rich_text' },
-      { name: 'image_url', type: 'rich_text' },
-      { name: 'timestamp', type: 'rich_text' },
-      { name: 'version', type: 'number' },
-    )).sort((a, b) => a.deck_id - b.deck_id);
-
-    this.contrib = await this.contrib_db.load(
-      { name: 'DeckID', type: 'number' },
-      { name: 'ContribID', type: 'rich_text' },
-    );
-  }
-
-  async upload(deckPayload: DeckPayload) {
-    const deck = deckPayload as Deck;
-    deck.version = 1;
-    deck.deck_id = (this.decklist.at(-1)?.deck_id ?? 0) + 1;
-    deck.timestamp = new Date()
-      .toISOString()
-      .split('T')[0]
-      .replaceAll('-', '/');
-
-    const resp = await this.list_db.push(...propertify(deck));
-    deck.page_id = resp?.id || '';
-    this.decklist.push(deck);
   }
 }
 
-const propertify = (deck: Deck): PropertyPayload[] => [
-  { name: 'deck_id', type: 'number', value: deck.deck_id },
-  { name: 'name', type: 'title', value: deck.name },
-  { name: 'clazz', type: 'select', value: deck.clazz },
-  { name: 'desc', type: 'rich_text', value: deck.desc },
-  { name: 'author', type: 'rich_text', value: deck.author },
-  { name: 'image_url', type: 'rich_text', value: deck.image_url },
-  { name: 'timestamp', type: 'rich_text', value: deck.timestamp },
-  { name: 'version', type: 'number', value: deck.version },
-];
+function giveScore(kw?: string) {
+  const kws = kw?.split(' ');
+  const kw_filter = kws ?
+    (deck: Deck) => kws.filter(kw => deck.name.includes(kw) || deck.desc.includes('#' + kw)).length :
+    (_: Deck) => 1;
+
+  return (d: Deck) => Object.assign(d, { score: kw_filter(d) });
+}

@@ -29,19 +29,14 @@ export interface ProbDetectObj {
 }
 
 export class Detect {
-  full: FullDetectObj[];
-  prob: ProbDetectObj[];
+  static full: FullDetectObj[] = full;
+  static prob: ProbDetectObj[] = prob;
 
-  constructor() {
-    this.full = full;
-    this.prob = prob;
-  }
-
-  get_length() {
+  static get_length() {
     return this.full.length + new Set(this.prob.map(obj => obj.target)).size;
   }
 
-  get_result(target: string) {
+  static get_result(target: string) {
     const full_detect = this.full.find(obj => obj.target === target);
     if (full_detect) {
       return full_detect.result;

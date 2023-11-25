@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { Command } from "../Command";
 import StudiedView from "../../view/StudiedView";
-import { DB_Manager } from "../../../database";
+import { Detect } from "../../../database";
 import { FullDetectObj } from "../../../database/detect";
 
 const cut = (str: string, len: number) =>
@@ -14,7 +14,7 @@ const cut = (str: string, len: number) =>
 // detect object to EmbedField
 class d2ef {
   static get full() {
-    return d2ef.fullList.map(d2ef.fullParse);
+    return this.fullList.map(d2ef.fullParse);
   }
 
   static fullParse(obj: FullDetectObj): APIEmbedField {
@@ -26,7 +26,7 @@ class d2ef {
   }
 
   static get fullList(): FullDetectObj[] {
-    return DB_Manager.detect.full;
+    return Detect.full;
   }
 
   static get prob() {
@@ -42,14 +42,14 @@ class d2ef {
   }
   
   static probVal(tar: string): string {
-    return DB_Manager.detect.prob
+    return Detect.prob
       .filter(obj => obj.target === tar)
       .map(obj => `${obj.result} (가중치: ${obj.ratio})`)
       .join('\n');
   }
 
   static get probKey(): string[] {
-    return [...new Set(DB_Manager.detect.prob.map(obj => obj.target))];
+    return [...new Set(Detect.prob.map(obj => obj.target))];
   }
 }
 

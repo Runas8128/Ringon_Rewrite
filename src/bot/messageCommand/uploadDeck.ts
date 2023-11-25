@@ -1,10 +1,8 @@
-import { setTimeout } from "timers/promises";
-
 import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
-import { DB_Manager } from "../../database";
+import { DeckList } from "../../database";
 import { classes } from "../../database/decklist";
 
 enum State {
@@ -48,16 +46,14 @@ export default {
         return;
       }
 
-      await DB_Manager.decklist.upload({
+      const uploaded = await DeckList.upload_deck({
         name,
         desc,
         clazz: iCh.name,
         author: interaction.user.id,
         image_url: att0.url,
       });
-
-      const uploaded = DB_Manager.decklist.decklist.find(d => d.name === name);
-      await iCh.send({ embeds: [ DB_Manager.decklist.make_deck_embed(uploaded!, interaction.guild!) ] });
+      await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
     
       await rst.editReply({
         content: '덱 등록을 성공적으로 마쳤습니다!',
@@ -65,22 +61,19 @@ export default {
       });
     }
     if (code === State.UPDATE) {
-      const prev_deck = DB_Manager.decklist.decklist.find(d => d.name === name);
+      const prev_deck = await DeckList.find_deck(name);
       if (!prev_deck) return;
+
+      const history_embed = DeckList.make_deck_embed(prev_deck);
+      await DeckList.history.send({ embeds: [ history_embed ] });
   
-      const history_embed = DB_Manager.decklist.make_deck_embed(prev_deck, interaction.guild!);
-      DB_Manager.decklist.load_history(interaction.guild!);
-      DB_Manager.decklist.history!.send({ embeds: [ history_embed ] });
-  
-      await DB_Manager.decklist.update_deck({
-        id: prev_deck.deck_id,
+      const uploaded = await DeckList.update_deck({
+        name: prev_deck.name,
         updater: interaction.user.id,
         desc: desc,
         image_url: att0?.url
       });
-
-      const uploaded = DB_Manager.decklist.decklist.find(d => d.name === name);
-      await iCh.send({ embeds: [ DB_Manager.decklist.make_deck_embed(uploaded!, interaction.guild!) ] });
+      await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
 
       await rst.editReply({
         content: `${name}을 성공적으로 업데이트했습니다!`,
@@ -128,13 +121,8 @@ async function getDeckInfo(interaction: CommandInteraction | ButtonInteraction):
   }
   await rst.deferReply({ ephemeral: true });
 
-  while (DB_Manager.loading.decklist) {
-    await setTimeout(100);
-  }
-
   const name = rst.fields.getTextInputValue('name');
-  if (!DB_Manager.decklist.decklist.find(d => d.name === name))
-    return [ State.OK, rst ];
+  if (!DeckList.find_deck(name)) return [ State.OK, rst ];
 
   const ID = Math.random().toString(36).substring(4);
   const row = new ActionRowBuilder<ButtonBuilder>()
