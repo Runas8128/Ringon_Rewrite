@@ -5,9 +5,9 @@ import { Command } from "./Command";
 import { fullCmdList } from "./commandList";
 import { isTesting } from "../../config/options/client_options";
 import { guild } from "../../config/options/discord";
-import { loggerGen } from "../../logger";
+import { Logger } from "../../logger";
 
-const logger = loggerGen.getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 function preprocess() {
   fullCmdList

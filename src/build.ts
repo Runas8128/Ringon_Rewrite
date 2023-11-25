@@ -5,11 +5,11 @@ import * as ReadLine from "readline/promises";
 
 import JSZip from "jszip";
 
-import { loggerGen } from "./logger";
+import { Logger } from "./logger";
 import { isTesting } from "./config/options/client_options";
 
-loggerGen.root = join(__dirname, 'index.ts');
-const logger = loggerGen.getLogger(__filename);
+Logger.root = join(__dirname, 'index.ts');
+const logger = Logger.getLogger(__filename);
 
 function add_zip(zip: JSZip, path_: string) {
   const dir_list = readdirSync(path_, { withFileTypes: true });

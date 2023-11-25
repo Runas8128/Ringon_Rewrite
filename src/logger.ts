@@ -36,10 +36,10 @@ function format_console(_label: string) {
   );
 }
 
-class Logger {
-  root: string = '';
+export class Logger {
+  static root: string = '';
 
-  getLogger(file: string) {
+  static getLogger(file: string) {
     const _label = path.relative(this.root, file);
 
     const consoleLogger = new winston.transports.Console({
@@ -56,5 +56,3 @@ class Logger {
     return winston.createLogger({ transports: [ consoleLogger, HTTPLogger ] });
   }
 }
-
-export const loggerGen = new Logger();

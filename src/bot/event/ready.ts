@@ -1,9 +1,9 @@
 import { Events } from "discord.js";
 
 import { Event } from "./Event";
-import { loggerGen } from "../../logger";
+import { Logger } from "../../logger";
 
-const logger = loggerGen.getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 export default {
   name: Events.ClientReady,

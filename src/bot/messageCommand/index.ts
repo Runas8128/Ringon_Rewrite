@@ -3,9 +3,9 @@ import { ApplicationCommandType, Client } from "discord.js";
 import { mcList } from "./mcList";
 import { MessageCommand } from "./messageCommand";
 import { guild } from "../../config/options/discord";
-import { loggerGen } from "../../logger";
+import { Logger } from "../../logger";
 
-const logger = loggerGen.getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 async function deploy(client: Client, mc: MessageCommand) {
   try {
