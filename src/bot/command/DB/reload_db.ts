@@ -13,7 +13,6 @@ export default {
       .setDescription('업데이트할 DB를 선택해주세요.')
       .setRequired(true)
       .addChoices(
-        { name: '감지', value: 'detect' },
         { name: '덱리', value: 'decklist' },
         { name: '카드', value: 'cards' },
       )),
@@ -28,7 +27,7 @@ export default {
 
     const sync_start = Date.now();
     const dbName = interaction.options.getString('db', true);
-    if (dbName === 'detect' || dbName === 'decklist' || dbName === 'cards')
+    if (dbName === 'decklist' || dbName === 'cards')
       await DB_Manager.load(dbName);
     const sync_end = Date.now();
     

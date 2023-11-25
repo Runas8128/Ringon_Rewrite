@@ -1,5 +1,5 @@
-import { detect } from '../config/options/notion';
-import { Database } from '../notion';
+import full from '../config/detect/full.json';
+import prob from '../config/detect/prob.json';
 
 function select_weight<T>(targets: Array<T>, weights: Array<number>): T {
   const total_weight = weights.reduce((prev, curr) => prev + curr, 0);
@@ -29,19 +29,16 @@ export interface ProbDetectObj {
 }
 
 export class Detect {
-  id_map: { [keys: string]: string };
-  full_db: Database;
-  prob_db: Database;
   full: FullDetectObj[];
   prob: ProbDetectObj[];
 
   constructor() {
-    this.id_map = detect;
-    this.full_db = new Database(this.id_map.full);
-    this.prob_db = new Database(this.id_map.prob);
+    this.full = full;
+    this.prob = prob;
+  }
 
-    this.full = [];
-    this.prob = [];
+  get_length() {
+    return this.full.length + new Set(this.prob.map(obj => obj.target)).size;
   }
 
   get_result(target: string) {
@@ -56,18 +53,5 @@ export class Detect {
       const ratio_list = prob_detect.map(obj => obj.ratio);
       return select_weight(result_list, ratio_list);
     }
-  }
-
-  async load() {
-    this.full = await this.full_db.load(
-      { name: 'target', type: 'title' },
-      { name: 'result', type: 'rich_text' },
-    );
-
-    this.prob = await this.prob_db.load(
-      { name: 'target', type: 'title' },
-      { name: 'result', type: 'rich_text' },
-      { name: 'ratio', type: 'number' },
-    );
   }
 }

@@ -6,7 +6,7 @@ import { loggerGen } from "../logger";
 
 const logger = loggerGen.getLogger(__filename);
 
-type dbName = 'detect' | 'decklist' | 'cards';
+type dbName = 'decklist' | 'cards';
 
 class Manager {
   detect: Detect;
@@ -28,7 +28,6 @@ class Manager {
 
   async load_all() {
     await Promise.all([
-      this.load('detect'),
       this.load('decklist'),
       this.load('cards'),
     ]);
