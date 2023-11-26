@@ -3,6 +3,7 @@ import express from 'express';
 
 import { pageList } from './pageList';
 import { Bot } from '../bot';
+import { MongoDB } from '../database/mongoDB';
 
 class App {
   app: express.Express;
@@ -28,6 +29,7 @@ class App {
 
   async start() {
     this.app.listen(8080, () => console.log('Listening on 8080'));
+    await MongoDB.connect();
     await Bot.login();
   }
 }
