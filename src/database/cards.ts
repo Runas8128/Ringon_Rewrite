@@ -2,26 +2,6 @@ import axios from 'axios';
 import { MongoDB } from './mongoDB';
 import { Card } from './schema';
 
-interface card_payload {
-  card_id: number;
-  card_name: string;
-  cost: number;
-  char_type: number;
-  atk: number;
-  life: number;
-  skill_disc: string;
-  evo_atk: number;
-  evo_life: number;
-  evo_skill_disc: string;
-}
-
-const char_map : { [keys: number]: string } = {
-  1: '추종자',
-  2: '아뮬렛',
-  3: '카운트다운 아뮬렛',
-  4: '스펠',
-};
-
 export class Cards {
   static async get_count() {
     return await MongoDB.colCard.countDocuments();
@@ -49,13 +29,26 @@ export class Cards {
   }
 }
 
+interface card_payload {
+  card_id: number;
+  card_name: string;
+  cost: number;
+  char_type: number;
+  atk: number;
+  life: number;
+  skill_disc: string;
+  evo_atk: number;
+  evo_life: number;
+  evo_skill_disc: string;
+}
+
 const parse_payload = ({
   card_id, card_name, cost, char_type,
   atk, life, skill_disc,
   evo_atk, evo_life, evo_skill_disc,
 }: card_payload) => ({
   card_id, name: card_name, cost,
-  type: char_map[char_type],
+  type: char_map[char_type - 1],
   atk, life, desc: skill_disc,
   evo_atk, evo_life, evo_desc: evo_skill_disc,
 } as Card);
@@ -68,3 +61,5 @@ function giveScore(kw?: string) {
 
   return (c: Card) => Object.assign(c, { score: kw_filter(c) });
 }
+
+const char_map: string[] = [ '추종자', '아뮬렛', '카운트다운 아뮬렛', '스펠' ];

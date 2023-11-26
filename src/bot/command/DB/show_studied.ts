@@ -4,12 +4,23 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import StudiedView from "../../view/StudiedView";
 import { Detect } from "../../../database";
-import { FullDetectObj } from "../../../database/detect";
 
-const cut = (str: string, len: number) =>
-  str.length > len ?
-    str.substring(0, len - 3) + '...' :
-    str;
+export default {
+  perm: 'member',
+  data: new SlashCommandBuilder()
+    .setName('배운거')
+    .setDescription('링곤이의 단어장을 보여드립니다. 추가/삭제는 개발자에게 직접 요청해주세요.'),
+  async execute(interaction) {
+    const fields: APIEmbedField[] = d2ef.full.concat(d2ef.prob);
+
+    const view = new StudiedView(
+      fields.length > 0 ?
+        fields :
+        [{ name: '엥 비어있네요', value: '왜지...', inline: true }],
+    );
+    await interaction.reply(view.get_updated_msg());
+  },
+} as Command;
 
 // detect object to EmbedField
 class d2ef {
@@ -17,7 +28,7 @@ class d2ef {
     return this.fullList.map(d2ef.fullParse);
   }
 
-  static fullParse(obj: FullDetectObj): APIEmbedField {
+  static fullParse(obj: { target: string, result: string }): APIEmbedField {
     return {
       name: obj.target,
       value: cut(obj.result, 50),
@@ -25,7 +36,7 @@ class d2ef {
     };
   }
 
-  static get fullList(): FullDetectObj[] {
+  static get fullList() {
     return Detect.full;
   }
 
@@ -53,19 +64,7 @@ class d2ef {
   }
 }
 
-export default {
-  perm: 'member',
-  data: new SlashCommandBuilder()
-    .setName('배운거')
-    .setDescription('링곤이의 단어장을 보여드립니다. 추가/삭제는 개발자에게 직접 요청해주세요.'),
-  async execute(interaction) {
-    const fields: APIEmbedField[] = d2ef.full.concat(d2ef.prob);
-
-    const view = new StudiedView(
-      fields.length > 0 ?
-        fields :
-        [{ name: '엥 비어있네요', value: '왜지...', inline: true }],
-    );
-    await interaction.reply(view.get_updated_msg());
-  },
-} as Command;
+const cut = (str: string, len: number) =>
+  str.length > len ?
+    str.substring(0, len - 3) + '...' :
+    str;

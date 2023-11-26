@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import DecklistView from "../../view/DecklistView";
 import { DeckList } from "../../../database";
-import { classes } from "../../../database/decklist";
+import { classes } from '../../../misc';
 
 export default {
   perm: 'member',

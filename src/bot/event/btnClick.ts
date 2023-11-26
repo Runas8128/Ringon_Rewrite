@@ -3,6 +3,20 @@ import { ButtonBuilder } from "@discordjs/builders";
 
 import { Event } from "./Event";
 
+export default {
+  name: Events.InteractionCreate,
+  once: false,
+  async execute(interaction: Interaction) {
+    if (!interaction.isButton()) return;
+
+    const button = eventHandler.button_map.find(obj =>
+      'custom_id' in obj.button.data &&
+      obj.button.data.custom_id === interaction.customId
+    );
+    await button?.callback(interaction);
+  },
+} as Event;
+
 type BtnCallback = (interaction: ButtonInteraction) => Promise<void>;
 
 interface BtnRegisterObj {
@@ -28,17 +42,3 @@ class ClickEventHandler {
 }
 
 export const eventHandler = new ClickEventHandler();
-
-export default {
-  name: Events.InteractionCreate,
-  once: false,
-  async execute(interaction: Interaction) {
-    if (!interaction.isButton()) return;
-
-    const button = eventHandler.button_map.find(obj =>
-      'custom_id' in obj.button.data &&
-      obj.button.data.custom_id === interaction.customId
-    );
-    await button?.callback(interaction);
-  },
-} as Event;

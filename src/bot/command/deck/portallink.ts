@@ -3,10 +3,6 @@ import { ButtonStyle } from "discord.js";
 import { ActionRowBuilder, ButtonBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 
-interface Portal {
-  data: { hash: string, errors: any[] };
-}
-
 export default {
   perm: 'member',
   data: new SlashCommandBuilder()
@@ -20,7 +16,7 @@ export default {
     await interaction.deferReply();
     const deck_code = interaction.options.getString('덱코드');
 
-    const result: Portal = (await axios.get(
+    const result: { data: { hash: string, errors: any[] } } = (await axios.get(
       `https://shadowverse-portal.com/api/v1/deck/import?format=json&deck_code=${deck_code}`)).data;
 
     if (result.data.errors.length > 0) {

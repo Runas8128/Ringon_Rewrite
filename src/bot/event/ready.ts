@@ -3,8 +3,6 @@ import { Events } from "discord.js";
 import { Event } from "./Event";
 import { Logger } from "../../logger";
 
-const logger = Logger.getLogger(__filename);
-
 export default {
   name: Events.ClientReady,
   once: true,
@@ -12,3 +10,5 @@ export default {
     logger.info('Bot is ready!');
   },
 } as Event;
+
+const logger = Logger.getLogger(__filename);

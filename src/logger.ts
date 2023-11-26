@@ -1,8 +1,27 @@
 import path from 'path';
-
 import winston from 'winston';
-
 const { combine, timestamp, printf, colorize, label } = winston.format;
+
+export class Logger {
+  static root: string = '';
+
+  static getLogger(file: string) {
+    const _label = path.relative(this.root, file);
+
+    const consoleLogger = new winston.transports.Console({
+      format: format_console(_label),
+    });
+
+    const HTTPLogger = new winston.transports.Http({
+      host: 'localhost',
+      port: 8080,
+      path: '/log',
+      format: format_base(_label),
+    });
+    
+    return winston.createLogger({ transports: [ consoleLogger, HTTPLogger ] });
+  }
+}
 
 function preprocessError(info: winston.Logform.TransformableInfo) {
   if (!(info instanceof Error)) return info;
@@ -34,25 +53,4 @@ function format_console(_label: string) {
     printf(info => colorize({ colors })
       .colorize(info.level, `[ ${info.label} ] ${[info.timestamp]} ${info.level}: ${info.message}`)),
   );
-}
-
-export class Logger {
-  static root: string = '';
-
-  static getLogger(file: string) {
-    const _label = path.relative(this.root, file);
-
-    const consoleLogger = new winston.transports.Console({
-      format: format_console(_label),
-    });
-
-    const HTTPLogger = new winston.transports.Http({
-      host: 'localhost',
-      port: 8080,
-      path: '/log',
-      format: format_base(_label),
-    });
-    
-    return winston.createLogger({ transports: [ consoleLogger, HTTPLogger ] });
-  }
 }

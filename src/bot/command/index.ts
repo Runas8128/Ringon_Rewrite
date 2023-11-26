@@ -9,6 +9,12 @@ import { Logger } from "../../logger";
 
 const logger = Logger.getLogger(__filename);
 
+export async function setup_command(client: Client) {
+  const list = preprocess();
+  await deploy_commands(client, list);
+  add_command_listener(client, list);
+}
+
 function preprocess() {
   fullCmdList
     .filter(c => c.perm === 'admin')
@@ -60,10 +66,4 @@ function add_command_listener(client: Client, commandList: Command[]) {
       throw err;
     }
   });
-}
-
-export async function setup_command(client: Client) {
-  const list = preprocess();
-  await deploy_commands(client, list);
-  add_command_listener(client, list);
 }

@@ -3,39 +3,7 @@ import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
 import { channel } from '../config/options/discord';
 import { Deck } from './schema';
 import { MongoDB } from './mongoDB';
-import { Document } from 'mongodb';
-
-export const classes : { [keys: string]: string } = {
-  "엘프": "1004600679433777182",
-  "로얄": "1004600684517261422",
-  "위치": "1004600687688163418",
-  "드래곤": "1004600677751848961",
-  "네크로맨서": "1004600681266675782",
-  "뱀파이어": "1004600685985271859",
-  "비숍": "1004600676053155860",
-  "네메시스": "1004600682902462465"
-};
-
-interface DeckPayload {
-  name: string;
-  clazz: string;
-  desc?: string;
-  author: string;
-  image_url: string;
-}
-
-interface DeckUpdatePayload {
-  name: string;
-  updater: string;
-  desc?: string;
-  image_url?: string;
-}
-
-interface searchPayload {
-  keyword?: string;
-  author?: string;
-  clazz?: string;
-}
+import { classes } from '../misc';
 
 export class DeckList {
   private static __guild?: Guild;
@@ -82,7 +50,7 @@ export class DeckList {
   }
 
   // search some decks with keyword, author and class info
-  static async search_deck({ keyword, author, clazz }: searchPayload) {
+  static async search_deck({ keyword, author, clazz }: SearchPayload) {
     const _rst = await MongoDB.colDeck
       .find({
         author, clazz,
@@ -169,6 +137,27 @@ export class DeckList {
     deck_info.setImage(deck.image_url);
     return deck_info;
   }
+}
+
+interface DeckPayload {
+  name: string;
+  clazz: string;
+  desc?: string;
+  author: string;
+  image_url: string;
+}
+
+interface DeckUpdatePayload {
+  name: string;
+  updater: string;
+  desc?: string;
+  image_url?: string;
+}
+
+interface SearchPayload {
+  keyword?: string;
+  author?: string;
+  clazz?: string;
 }
 
 function giveScore(kw?: string) {

@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { Deck } from './schema';
-import { Card } from './schema';
+import { Deck, Card } from './schema';
 
 export class MongoDB {
   private static __client = new MongoClient(process.env.mongodb!, {

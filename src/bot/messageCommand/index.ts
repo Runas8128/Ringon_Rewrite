@@ -7,6 +7,11 @@ import { Logger } from "../../logger";
 
 const logger = Logger.getLogger(__filename);
 
+export async function setup_message_command(client: Client) {
+  await deploy_commands(client);
+  add_command_listener(client);
+}
+
 async function deploy(client: Client, mc: MessageCommand) {
   try {
     await client.application?.commands
@@ -34,9 +39,4 @@ function add_command_listener(client: Client) {
 
     await command.execute(interaction);
   });
-}
-
-export async function setup_message_command(client: Client) {
-  await deploy_commands(client);
-  add_command_listener(client);
 }
