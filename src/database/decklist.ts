@@ -1,4 +1,5 @@
 import { EmbedBuilder, Guild, TextChannel, Client } from 'discord.js';
+import { Filter } from 'mongodb';
 
 import { channel } from '../config/options/discord';
 import { Deck } from './schema';
@@ -51,11 +52,13 @@ export class DeckList {
 
   // search some decks with keyword, author and class info
   static async search_deck({ keyword, author, clazz }: SearchPayload) {
+    const search_option: Filter<Deck> = {};
+    if (author) search_option.author = author;
+    if (clazz) search_option.clazz = clazz;
+    if (keyword) search_option.$or = keyword.split(' ').map(k => ({ name: { $regex: k } }));
+
     const _rst = await MongoDB.colDeck
-      .find({
-        author, clazz,
-        $or: keyword?.split(' ').map(k => ({ name: { $regex: k } }))
-      })
+      .find(search_option)
       .map(giveScore(keyword))
       .toArray();
 
