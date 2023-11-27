@@ -27,7 +27,8 @@ export default {
     if (focusdVar.name != '키워드') return;
 
     const result = (await Cards.search_card(focusdVar.value))
-      .map(c => ({ name: c.name, value: c.name }));
+      .map(c => ({ name: c.name, value: c.name }))
+      .slice(0, 25);
     if (result.length > 0) await interaction.respond(result);
   },
 } as Command;
