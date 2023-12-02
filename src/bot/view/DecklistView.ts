@@ -4,7 +4,7 @@ import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder 
 import UpDownView from "./UpDownView";
 import { eventHandler } from "../event/btnClick";
 import { DeckList } from "../../database";
-import { classes } from '../../misc';
+import { classes } from '../../config/classes';
 import { Deck } from '../../database/schema';
 
 export default class extends UpDownView {

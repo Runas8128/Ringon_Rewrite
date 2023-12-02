@@ -4,7 +4,7 @@ import { Filter } from 'mongodb';
 import { channel } from '../config/options/discord';
 import { Deck } from './schema';
 import { MongoDB } from './mongoDB';
-import { classes } from '../misc';
+import { classes } from '../config/classes';
 
 export class DeckList {
   private static __guild?: Guild;

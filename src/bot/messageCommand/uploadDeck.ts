@@ -3,7 +3,7 @@ import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from 
 
 import { MessageCommand } from "./messageCommand";
 import { DeckList } from "../../database";
-import { classes } from '../../misc';
+import { classes } from '../../config/classes';
 
 enum State {
   OK = 0,
