@@ -1,5 +1,5 @@
 import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildTextBasedChannel, ModalSubmitInteraction, TextInputStyle } from "discord.js";
-import { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
 
 import { MessageCommand } from "./messageCommand";
 import { DeckList } from "../../database";
@@ -53,11 +53,23 @@ export default {
         author: interaction.user.id,
         image_url: att0.url,
       });
-      await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
+      const newMessage = await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
     
       await rst.editReply({
         content: '덱 등록을 성공적으로 마쳤습니다!',
         allowedMentions: { repliedUser: false },
+      });
+
+      await DeckList.deckNotice.send({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('새 덱이 업로드되었습니다!')
+            .setDescription('덱 이름: ' + name)
+        ],
+        components: [
+          new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('보러 가기').setURL(newMessage.url))
+        ]
       });
     }
     if (code === State.UPDATE) {
@@ -73,12 +85,24 @@ export default {
         desc: desc,
         image_url: att0?.url
       });
-      await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
+      const newMessage = await iCh.send({ embeds: [ DeckList.make_deck_embed(uploaded!) ] });
 
       await rst.editReply({
         content: `${name}을 성공적으로 업데이트했습니다!`,
         allowedMentions: { repliedUser: false }
       })
+
+      await DeckList.deckNotice.send({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('새 덱이 업로드되었습니다!')
+            .setDescription('덱 이름: ' + name)
+        ],
+        components: [
+          new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('보러 가기').setURL(newMessage.url))
+        ]
+      });
     }
     if (code === State.CANCEL) {
       await rst.editReply("덱 등록을 취소합니다.");

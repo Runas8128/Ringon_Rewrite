@@ -17,6 +17,10 @@ export class DeckList {
     return this.__guild?.channels.cache.find(ch => ch.id === channel.history) as TextChannel;
   }
 
+  static get deckNotice() {
+    return this.__guild?.channels.cache.find(ch => ch.id === channel.deck_notice) as TextChannel;
+  }
+
   static async analyze(client: Client) {
     const total_count = await MongoDB.colDeck.countDocuments();
     const embed = new EmbedBuilder()
